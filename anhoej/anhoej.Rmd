@@ -1,0 +1,108 @@
+---
+title: Modifying the Anhøj Rules to Improve Runs Analysis in Statistical Process Control
+author:
+  - name: Jacob Anhøj
+    affiliation: Rigshospitalet, University of Copenhagen
+    address:
+    - Denmark
+    email: jacob@anhoej.net
+  - name: Tore Wentzel-Larsen
+    affiliation: Centre for Child and Adolescent Mental Health, Eastern and Southern Norway & Centre for Violence and Traumatic Stress Studies, Oslo, Norway
+    address:
+    - Norway
+    email:  tore.wentzellarsen@gmail.com
+abstract: >
+  An abstract of less than 150 words.
+output:
+  rticles::rjournal_article:
+    includes:
+      in_header: preamble.tex
+---
+
+## Introduction
+
+Within statistical process control (SPC) runs analysis is being used to detect persistent shifts in process location over time. 
+
+We have previously shown that runs analysis using the Anhøj rules have comparable or even better diagnostic properties than traditional control chart rules that are commonly used to detect minor to moderate *persistens* shifts in process location \citep{anhoej2018}.
+
+## Methods
+
+## Results
+
+## Discussion
+
+## Conclusion
+
+Here is a reference to Figure \ref{figure:box11}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig_box11.pdf}
+  \caption{Borders of the anhøj, best box, and cut box rules.  
+           The numbers in the cells are times representation of of the joint
+           probabilities of longest run and number of crossings.}
+  \label{figure:box11}
+\end{figure}
+
+Here is a reference to Figure \ref{figure:spec}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig_spec.pdf}
+  \caption{Specificity of the anhøj, best box, and cut box rules.}
+  \label{figure:spec}
+\end{figure}
+
+Here is a reference to Figure \ref{figure:pwr}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig_pwr.pdf}
+  \caption{Power function.}
+  \label{figure:pwr}
+\end{figure}
+
+Here is a reference to Figure \ref{figure:lrpos}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig_lrpos.pdf}
+  \caption{Positive likelihood ratio.}
+  \label{figure:lrpos}
+\end{figure}
+
+Here is a reference to Figure \ref{figure:lrneg}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig_lrneg.pdf}
+  \caption{Negative likelihood ratio.}
+  \label{figure:lrneg}
+\end{figure}
+
+```{r, echo=FALSE}
+library(knitr)
+library(kableExtra)
+options(knitr.kable.NA = '')
+
+b <- readRDS('../data/cr_bounds.rds')
+b <- b[, 1:7]
+names(b) <- c('N', 'L', 'C', 'L', 'C', 'Cbord', 'Lbord')
+
+cap <- 'Signal limits for the anhøj and best box rules and borders for the cut
+        box rules. N = number of trials. L = upper limit for longest run, 
+        C = lower limit for number of crossings, Cbord and Lbord = cut box 
+        borders to keep.'
+
+kable(b, 
+      format = 'latex',
+      booktab = T, 
+      longtable = T, 
+      row.names = F, 
+      caption = cap) %>% 
+  add_header_above(c(' ' = 1, 'Anhøj' = 2, 'Best box' = 2, 'Cut box' = 2)) %>% 
+  kable_styling(latex_options = 'repeat_header')
+```
+
+
+\bibliography{RJreferences}
