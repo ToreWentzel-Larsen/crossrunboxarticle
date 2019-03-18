@@ -1,7 +1,7 @@
 # Setup ----
 library(tidyverse)
 
-save.plots <- F
+save.plots <- T
 
 x <- read_rds('data/cr_dist.rds')
 b <- read_rds('data/cr_bounds.rds')
@@ -22,7 +22,7 @@ vals <- b %>%
 
 # Plot power function ----
 ggplot(vals, aes(n, 1 - p, colour = rule)) +
-  geom_line() +
+  geom_line(size = 1) +
   facet_wrap(~ shift, ncol = 4) +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
   theme_minimal() +
@@ -34,7 +34,7 @@ if(save.plots)
 
 ## Specificity
 ggplot(filter(vals, shift == 0), aes(n, p, colour = rule)) +
-  geom_line() +
+  geom_line(size = 1) +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
   theme_minimal() +
   labs(title = 'Specificity',
@@ -47,7 +47,7 @@ if(save.plots)
 ## LR+
 ggplot(filter(vals, !is.na(loglrpos)), 
        aes(n, exp(loglrpos), colour = rule)) +
-  geom_line() +
+  geom_line(size = 0.75) +
   geom_hline(yintercept = 10) +
   facet_wrap(~ shift, ncol = 5) +
   scale_y_log10() +
@@ -62,7 +62,7 @@ if(save.plots)
 ## LR-
 ggplot(filter(vals, !is.na(loglrpos)),
        aes(n, exp(loglrneg), colour = rule)) +
-  geom_line() +
+  geom_line(size = 0.75) +
   geom_hline(yintercept = 0.1) +
   facet_wrap(~ shift, ncol = 5) +
   scale_y_log10() +
@@ -104,13 +104,15 @@ crplot <- function(n = 11, labels = T) {
                   xmax = la + 0.5,
                   ymin = ca - 0.5,
                   ymax = max(C) + 0.5),
-              colour   = '#F8766D',
-              fill = NA) +
+              colour = '#F8766D',
+              size = 1,
+              fill   = NA) +
     geom_rect(aes(xmin = 0.5,          # Best box
                   xmax = lb + 0.5,
                   ymin = cb - 0.5,
                   ymax = max(C) + 0.5),
               linetype = 2,
+              size = 1,
               colour   = '#00BA38',
               fill = NA) +
     geom_rect(aes(xmin = lbord + 0.5,  # Cut box, horizontal
@@ -120,6 +122,7 @@ crplot <- function(n = 11, labels = T) {
               colour   = '#619CFF',
               fill     = NA,
               linetype = 4,
+              size = 1,
               na.rm    = T) +
     geom_rect(aes(xmin = lb - 0.5,     # Cut box, vertical
                   xmax = lb + 0.5,
