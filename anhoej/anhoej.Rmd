@@ -60,7 +60,7 @@ We recently released an R package, \CRANpkg{crossrun} \citep{twl2018}, that incl
 
 With the \CRANpkg{crossrun} package at hand it is feasible to calculate exact joint probabilities of C and L for different numbers of observations and shift sizes. And consequently, it is feasible to investigate the diagnostic properties of run charts using exact values for specificity and sensitivity rather than values based on time consuming and complicated simulation studies.
 
-As is clearly visible in Figure \ref{figure:spec} the specificity of the Anhøj rules (red line) jumps up and down as n increases. This is a result of the discrete nature of the two tests -- especially the shift test. Although the specificity of the Anhøj rules do not decease continuously as n increases like other rules do, we hypothesised that it would be possible to improve their diagnostic value further by smoothing the specificity using minor adjustments of C and L depending on n.
+As is clearly visible in Figure \ref{figure:spec} the specificity of the Anhøj rules (red line) jumps up and down as n changes. This is a result of the discrete nature of the two tests -- especially the shift test. Although the specificity of the Anhøj rules does not decrease continuously as n increases like other rules do, we hypothesised that it would be possible to improve their diagnostic value further by smoothing the specificity using minor adjustments to C and L depending on n.
 
 The aim of this study was to suggest a procedure for smoothing the diagnostic properties of the Anhøj runs rules.
 
@@ -73,7 +73,7 @@ The value of a diagnostic test is traditionally described using terms like sensi
 $$ Specificity=P(\text{no signal | no shift})=P(\text{true negative})=1-\alpha $$
 $$ Sensitivity=P(\text{signal | shift})=P(\text{true positive})=1-\beta $$
 
-However, we usually seek to answer the opposite question: what is the likelihood that a positive or negative test actually represents the condition being tested for, which in our case is a shift in the underlying process? Likelihood ratios do this:
+However, we usually seek to answer the opposite question: what is the likelihood that a positive or negative test actually represents the condition being tested for, which in our case is a shift in the underlying process? Likelihood ratios (LR) do this:
 
 $$ LR+=TP/FP=sensitivity/(1-specificity) $$
 $$ LR-=FN/TN=(1-sensitivity)/specificity $$
@@ -84,7 +84,7 @@ A likelihood ratio greater than 1 speaks in favour of the condition, while a lik
 
 We developed two functions, \code{bestbox()} and \code{cutbox()} that automatically seek to adjust the critical values for C and L in such a way that the specificity is keept as close as possible to a specified target value. In this study we used a target of 92.5%, which is close to the actual average specificity for the Anhøj rules for n = 10-100.
 
-Specifically, the \code{bestbox()} function finds the box with lowest specificity for the target shift, among boxes with specificity >= target for shift = 0; and the \code{cutbox()} cuts corners from a box while keeping specificity >= target for shift = 0. Figure \ref{figure:box11} illustrates these principles for a run chart with 11 data points.
+Specifically, the \code{bestbox()} function finds the box with lowest specificity for the target shift, among boxes with specificity >= target for shift = 0; and the \code{cutbox()} cuts corners from a best box while keeping specificity >= target for shift = 0. Figure \ref{figure:box11} illustrates these principles for a run chart with 11 data points.
 
 While \code{bestbox()} may add or remove rows or columns from the corresponding Anhøj box, \code{cutbox()} cuts none or more sqares in vertical or horisontal direction from the upper right corner of the corresponding best box.
 
