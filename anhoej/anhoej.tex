@@ -192,7 +192,7 @@ Figure \ref{figure:box11} illustrates these principles for a run chart
 with 11 data points. Thus, for N = 11, the Anhøj rules would signal a
 shift if C \textless{} 2 or L \textgreater{} 6; best box would signal if
 C \textless{} 3 or L \textgreater{} 7; and cut box would signal if C
-\textless{} 3 or L \textgreater{} 7 except when C = 3 and L = 7.
+\textless{} 3 or L \textgreater{} 7, and also when C = 3 and L = 7.
 
 \hypertarget{results}{%
 \subsection{Results}\label{results}}
@@ -285,7 +285,7 @@ by reducing sudden shifts in sensitivity and specificity when the number
 of available data points changes. However, this remains to be confirmed
 in practice.
 
-The study has tow important limitations. First, the calculations of box
+The study has two important limitations. First, the calculations of box
 probabilities require that the process centre, usually the median, is
 fixed and known in advance, for example, from historical data. In
 practice the centre line is often determined from the actual data in the
@@ -315,8 +315,9 @@ As a note on the practical application of the box adjustment of the
 Anhøj rules, we plan to include a \code{method} argument in the
 \code{qic()} function of the \CRANpkg{qicharts2} package allowing the
 user to choose between ``anhoej'', ``bestbox'', and ``cutbox'' methods
-to identify non-random variation for up to 100 data points. For more
-than 100 data points, the Anhøj rules will be applied.
+to identify non-random variation in run and control charts with up to
+100 data points. For more than 100 data points, the Anhøj rules will be
+applied.
 
 \hypertarget{conclusion}{%
 \subsection{Conclusion}\label{conclusion}}
