@@ -89,7 +89,7 @@ Based on the \CRANpkg{crossrun} package we developed two functions, \code{bestbo
 
 In this study we used a target specificity of 92.5%, which is close to the actual average specificity for the Anhøj rules for N = 10-100, while the target shift was set at 0.8. 
 
-Figure \ref{figure:box11} illustrates these principles for a run chart with 11 data points. Thus, for N = 11, the Anhøj rules would signal a shift if C < 2 or L > 6; best box would signal if C < 3 or L > 7; and cut box would signal if C < 3 or L > 7 except when C = 3 and L = 7.
+Figure \ref{figure:box11} illustrates these principles for a run chart with 11 data points. Thus, for N = 11, the Anhøj rules would signal a shift if C < 2 or L > 6; best box would signal if C < 3 or L > 7; and cut box would signal if C < 3 or L > 7, and also when C = 3 and L = 7.
 
 ## Results
 
