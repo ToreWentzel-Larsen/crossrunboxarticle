@@ -147,7 +147,7 @@ Second, the procedures have so far only been checked for up to 100 data points. 
 
 Also, one should be aware that the value of the box procedures rely on the choice of target sensitivity and target shift values Other target values may give very different diagnostic properties. However, by supplying the R code, we encourage readers to adapt our findings to their own needs.
 
-As a note on the practical application of the box adjustment of the Anhøj rules, we plan to include a \code{method} argument in the \code{qic()} function of the \CRANpkg{qicharts2} package allowing the user to choose between "anhoej", "bestbox", and "cutbox" methods to identify non-random variation in run and control charts with up to 100 data points. For more than 100 data points, the Anhøj rules will be applied.
+As a note on the practical application of the box adjustment of the Anhøj rules, we plan to include a \code{method} argument in the \code{qic()} function of the \CRANpkg{qicharts2} package allowing the user to choose between "anhoej", "bestbox", and "cutbox" methods to identify non-random variation in run and control charts with up to 100 data points.
 
 
 
