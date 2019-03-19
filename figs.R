@@ -163,7 +163,7 @@ crplot <- function(n = 11, labels = T) {
 
 crplot(11, labels = T)
 if(save.plots)
-  ggsave('figures/fig_box11.pdf', height = 11.1, width = 11.1)
+  ggsave('figures/fig_box11.pdf', height = 8, width = 8)
 
 # crplot(10, labels = T)
 # crplot(11, labels = T)
