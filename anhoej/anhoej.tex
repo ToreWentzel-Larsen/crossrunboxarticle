@@ -206,7 +206,7 @@ numerical precision. To get the actual likelihood values back, use
 full results set is available in the supplementary R data set
 \file{cr\_bounds.rds}. The joint probabilities for N = 1-100 (using the
 times representation) are provided in the \file{cr\_dist.rds} dataset.
-To get the matric for, say, N = 11, use \code{cr\_dist[[11]]}. The R
+To get the matrix for, say, N = 11, use \code{cr\_dist[[11]]}. The R
 code to produce the results and the figures in this article are
 available in the supplementary materials \file{crossrunbox.R} and
 \file{figs.R} respectively.
@@ -266,7 +266,7 @@ This study provided exact values for the diagnostic properties of the
 Anhøj rules for run charts with 10-100 data points with and without
 shifts up to 3 standard deviation units.
 
-To our knowledge, and with the exeption of our own \CRANpkg{crossrun}
+To our knowledge, and with the exception of our own \CRANpkg{crossrun}
 package, the properties of the joint distribution of number of crossings
 and longest runs in random data series have not been studied before.
 
@@ -286,41 +286,45 @@ of available data points changes. However, this remains to be confirmed
 in practice.
 
 The study has two important limitations. First, the calculations of box
-probabilities require that the process centre, usually the median, is
-fixed and known in advance, for example, from historical data. In
-practice the centre line is often determined from the actual data in the
-run chart, in which case the calculations of box probabilites do not
-apply. Preliminary studies suggest that this is mostly relevant for
-short data series. We plan to include a function in a future update of
-\CRANpkg{crossrun} to calculate the box probabilites with emperical
+probabilities require that the process centre is fixed and known in
+advance, for example, the median from historical data. In practice the
+centre line is often determined from the actual data in the run chart,
+in which case the calculations of box probabilities do not apply.
+Preliminary studies suggest that this is mostly relevant for short data
+series. We plan to include a function in a future update of
+\CRANpkg{crossrun} to calculate the box probabilities with empirical
 centre lines.
 
 Second, the procedures have so far only been checked for up to 100 data
 points. Because of the iterative procedures and use of high precision
-numbers (\CRANpkg{Rmpfr}) needed to calculate the joint distribution,
-the computations are time consuming. On a laptop with an Intel Core i5
-processor and 8 Gb RAM, it took about one hour (with all RAM consumed)
-to complete \code{crossrunbox.R}. However, we have no reason to believe
-that the procedures are not valid for N \textgreater{} 100, but the
-application of the box procedures for larger N may be impractical at the
-moment.
+numbers (\CRANpkg{Rmpfr}) needed to calculate the joint distributions
+for varying N, the computations are time consuming. On a laptop with an
+Intel Core i5 processor and 8 GB RAM, it took about one hour to complete
+\code{crossrunbox.R}, and the objects created consumed over 4 GB of
+memory. However, we have no reason to believe that the procedures are
+not valid for N \textgreater{} 100, but the application of the box
+procedures for larger N may be impractical at the moment.
 
 Also, one should be aware that the value of the box procedures rely on
-the choice of target sensitivity and target shift values Other target
+the choice of target sensitivity and target shift values. Other target
 values may give very different diagnostic properties. However, by
-supplying the R code, we encourage readers to adapt our findings to
-their own needs.
+supplying the R code, we encourage users to adapt our findings to their
+own needs.
 
-As a note on the practical application of the box adjustment of the
-Anhøj rules, we plan to include a \code{method} argument in the
-\code{qic()} function of the \CRANpkg{qicharts2} package allowing the
+Regarding the practical application of the box adjustment of the Anhøj
+rules, we are in the process of testing a \code{method} argument for the
+\code{qic()} function in the \CRANpkg{qicharts2} package allowing the
 user to choose between ``anhoej'', ``bestbox'', and ``cutbox'' methods
 to identify non-random variation in run and control charts with up to
-100 data points. For more than 100 data points, the Anhøj rules will be
-applied.
+100 data points. This will allow us and others to quickly gain practical
+experience with the box adjustments on real life data.
 
-\hypertarget{conclusion}{%
-\subsection{Conclusion}\label{conclusion}}
+In conclusion, this study provided exact values for the diagnostic
+properties of the Anhøj rules for run charts with 10-100 data points
+with and without shifts up to 3 standard deviation units, and
+demonstrated that it is feasible to reduce the variability in run chart
+specificity from varying number of data points by using the best box and
+cut box adjustments of the Anhøj rules.
 
 \bibliography{RJreferences}
 
