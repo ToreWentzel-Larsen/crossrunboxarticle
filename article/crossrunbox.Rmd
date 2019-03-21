@@ -93,7 +93,7 @@ We calculated the limits for the Anhøj, best box, and cut box rules together wi
 
 Figure \ref{figure:spec} illustrates the effect of the best box and cut box procedures on the specificity of the runs analysis. As expected, the variability in specificity with varying N is markedly reduced and kept above and closer to the specified target -- more with cut box than with best box.
 
-Figure \ref{figure:pwr} shows the probabilities of getting a signal as a function of N and SD. The upper left facet (SD = 0) contains the same data as Figure \ref{figure:spec}. As expected and shown previously in our simulations studies, the power of the runs analysis increases with increasing N and SD. The smoothing effect of best box and cut box appears to wear off as N and SD increases.
+Figure \ref{figure:pwr} shows the probabilities of getting a signal as a function of N and SD. The upper left facet (SD = 0) contains the same data as Figure \ref{figure:spec}. As expected and shown previously in our simulation studies, the power of the runs analysis increases with increasing N and SD. The smoothing effect of best box and cut box appears to wear off as N and SD increases.
 
 \begin{figure}[htbp]
   \centering
@@ -154,7 +154,7 @@ library(knitr)
 library(kableExtra)
 options(knitr.kable.NA = '')
 
-b <- readRDS('../data/cr_bounds.rds')
+b <- readRDS('../data/boundspll.rds')
 # b <- b[, 1:7]
 b <- b[, c('n', 'ca', 'la', 'cb', 'lb', 'cbord', 'lbord', 
            'pa_0.0', 'pb_0.0', 'pc_0.0')]
