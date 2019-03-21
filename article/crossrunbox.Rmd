@@ -12,7 +12,7 @@ author:
     - Norway
     email:  tore.wentzellarsen@gmail.com
 abstract: >
-  An abstract of less than 150 words.
+  Run charts is one form of statistical process control charts that is particularly useful for detecting minor to moderate shifts in data over time. The Anhøj rules test for shifts by looking for unusually long runs (L) of data points on the same side of the proces centre (mean or median) and unusually few crossings (C) of the centre line. The critical values for C and L depend on the number of available data points (N). Consequently, the diagnostic properties (e.g. sensitivity and specificity) of the Anhøj rules also depend on N and have a rugget appearance due to the discrete nature of the tests. This study demonstrates that it is possible to obtain better diagnostic properties by making minor adjustment to the critical values for C and L. We refer to these procedures as the best box and cut box adjustment procedures.
 output:
   rticles::rjournal_article:
     includes:
@@ -25,15 +25,13 @@ Within statistical process control (SPC) runs analysis is being used to detect p
 
 Runs analysis deals with the natural limits of number of runs and run lengths in random processes. A run is a series of one or more consecutive elements of the same kind, for example heads and tails, diseased and non-diseased individuals, or numbers above or below a certain value. A run chart is a point-and-line chart showing data over time with the median as reference line. In a random process, the data points will be randomly distributed around the median, and the number and lengths of runs will be predictable within limits. All things being equal, if the process shifts, runs tend to become longer and fewer. Consequently, runs analysis may help detect shifts in process location. Process shifts are one form of non-random variation in time series data that are of particular interest to quality control and improvement: If a process shifts, it may be the result of planned improvement or unwanted deterioration.
 
-Several tests (or rules) based on the principles of runs analysis for detection of shifts exist. In previous papers we demonstrated that the currently best performing rules with respect to sensitivity and specificity to shifts in process location are two simple tests \citep{anhoej2014, anhoej2015, anhoej2018}:
+Several tests (or rules) based on the principles of runs analysis for detection of shifts exist. In previous papers we demonstrated, using simulated data series, that the currently best performing rules with respect to sensitivity and specificity to shifts in process location are two simple tests \citep{anhoej2014, anhoej2015, anhoej2018}:
 
 * Shifts test: one or more unusually long runs of data points on the same side of the centre line.
 
 * Crossings test: the curve crosses the centre line unusually few times.
 
 Collectively, we refer to these tests as the Anhøj rules, which are the default rules used for run and control chart analysis with the \CRANpkg{qicharts2} package \citep{qicharts2}. Critical values for run length and number of crossings depend on the total number of data points in the chart. The number of crossings follow a binomial distribution, $b(n - 1, 0.5)$, where n is the number of data points and 0.5 the success probability. Thus, the lower prediction limit for number of crossings may, for example, be set to the lower 5th percentile of the corresponding cumulative binomial distribution \citep{chen2010}. However, no closed form expression exists for the distribution of longest runs. Consequently, the upper prediction limit for longest runs has traditionally been either a fixed value (usually 7 or 8) \citep{carey2002a} or an approximate value depending on n as with the Anhøj rules: $log_2(n) + 3$ rounded to the nearest integer \citep{schilling2012}.
-
-Using simulations, we have shown that runs analysis using the Anhøj rules are comparable to the widely used Western Electric control chart rules at detecting minor to moderate *persistent* shifts \citep{anhoej2018}.
 
 Each of the two tests has an overall specificity (true negative proportion) around 95%. The sensitivity (true positive proportion) of a test depends on the size of the shift (signal) relative to the random variation inherent in the process (noise). When applied together, the sensitivity increases, while the specificity decreases a bit.
 
@@ -44,9 +42,7 @@ Each of the two tests has an overall specificity (true negative proportion) arou
   \label{figure:spec}
 \end{figure}
 
-Historically, runs tests have mainly been studied in isolation as individual tests. But what is really of interest, because the rules are linked -- when one goes up, the other goes down -- is the properties of the joint distribution of longest runs and number of crossings.
-
-We recently released an R package, \CRANpkg{crossrun} \citep{twl2018}, that includes functions for calculating the joint probabilities of the number of crossings (C) and longest runs (L) in random data series of different lengths (N) and with and without shifts in process location expressed in standard deviation units (SD). Figure \ref{figure:box11} illustrates this for a run chart with N = 11 and SD = 0 (no shift). To avoid very small numbers, the probabilities are shown using the times representation, that is, the probabilities times $2^{n-1}$, which is `r 2^(11-1)` for N = 11. The red box encloses the combinations of C and L that would indicate random variation according to the Anhøj rules (true negatives). The area outside the box represents combinations of C and L that would indicate non-random variation (false positives).
+Historically, runs tests have mainly been studied in isolation as individual tests. But what is really of interest, because the rules are linked -- when one goes up, the other goes down -- is the properties of the joint distribution of longest runs and number of crossings. We recently released an R package, \CRANpkg{crossrun} \citep{twl2018}, that includes functions for calculating the joint probabilities of the number of crossings (C) and longest runs (L) in random data series of different lengths (N) and with and without shifts in process location expressed in standard deviation units (SD). Figure \ref{figure:box11} illustrates this for a run chart with N = 11 and SD = 0 (no shift). To avoid very small numbers, the probabilities are shown using the times representation, that is, the probabilities times $2^{n-1}$, which is `r 2^(11-1)` for N = 11. The red box encloses the combinations of C and L that would indicate random variation according to the Anhøj rules (true negatives). The area outside the box represents combinations of C and L that would indicate non-random variation (false positives).
 
 \begin{figure}[htbp]
   \centering
@@ -59,7 +55,7 @@ We recently released an R package, \CRANpkg{crossrun} \citep{twl2018}, that incl
   \label{figure:box11}
 \end{figure}
 
-With the \CRANpkg{crossrun} package it became feasible to calculate exact joint probabilities of C and L for different N and SD. And consequently, it became feasible to investigate the diagnostic properties of run charts using exact values for specificity and sensitivity rather than values based on time consuming and complicated simulation studies.
+With the \CRANpkg{crossrun} package it became feasible to calculate exact joint probabilities of C and L over a wide range of N and SD. And consequently, it became feasible to investigate the diagnostic properties of run charts using exact values for specificity and sensitivity rather than values based on time consuming, inaccurate, and complicated simulation studies.
 
 As is clearly visible in Figure \ref{figure:spec} the specificity of the Anhøj rules (red line) jumps up and down as N changes. This is a consequence of the discrete nature of the two tests -- especially the shifts test. Although the specificity of the Anhøj rules does not decrease continuously as N increases as is the case with other rules, we hypothesised that it would be possible to improve the diagnostic value further by smoothing the specificity using minor adjustments to C and L depending on N.
 
@@ -93,7 +89,7 @@ Figure \ref{figure:box11} illustrates these principles for a run chart with 11 d
 
 ## Results
 
-We calculated the limits for the Anhøj, best box, and cut box rules together with their corresponding positive test proportions and log-likelihood ratios for N = 10-100 and SD = 0-3 (in 0.2 SD increments). We stored the log of likelihood ratios to preserve numerical precision. To get the actual likelihood values back, use \code{exp(log-likelihood)}. The limits and specifities are presented in Table \ref{tab:tab1}. The R code to reproduce the full results set and the figures from this article is provided in the supplementary file \file{crossrunbox.R}.
+We calculated the limits for the Anhøj, best box, and cut box rules together with their corresponding positive test proportions and log-likelihood ratios for N = 10-100 and SD = 0-3 (in 0.2 SD increments). We stored the log of likelihood ratios to preserve numerical precision. To get the actual likelihood values back, use \code{exp(log-likelihood)}. The limits and specificities are presented in Table \ref{tab:tab1}. The R code to reproduce the full results set and the figures from this article is provided in the supplementary file \file{crossrunbox.R}.
 
 Figure \ref{figure:spec} illustrates the effect of the best box and cut box procedures on the specificity of the runs analysis. As expected, the variability in specificity with varying N is markedly reduced and kept above and closer to the specified target -- more with cut box than with best box.
 
@@ -139,7 +135,7 @@ To our knowledge, and with the exception of our own \CRANpkg{crossrun} package, 
 
 Furthermore, the study demonstrated that it is feasible to reduce the variability in run chart specificity from varying number of data points by using the best box and cut box adjustments of the Anhøj rules.
 
-Most importantly, figures \ref{figure:lrpos} and \ref{figure:lrneg} confirm what we expected from years of practical experience using runs analysis, that the Anhøj rules is a useful and robust method for detection of persistent shifts only slightly larger than 1 standard deviation units and with as little as 10-12 data points. This can be seen by the fact that LR+ > 10 for SD > 1 and N $\geq$ 10. Although, the best box and cut box procedures will not change this, the box adjustments may potentially improve the practical value of runs analysis by reducing sudden shifts in sensitivity and specificity when the number of available data points changes. However, this remains to be confirmed in practice.
+Most importantly, figures \ref{figure:lrpos} and \ref{figure:lrneg} confirm what we expected after years of practical experience using runs analysis, that the Anhøj rules is a useful and robust method for detection of persistent shifts only slightly larger than 1 standard deviation units and with as little as 10-12 data points. This can be seen by the fact that LR+ > 10 for SD > 1 and N $\geq$ 10. Although, the best box and cut box procedures will not change this, the box adjustments may potentially improve the practical value of runs analysis by reducing sudden shifts in sensitivity and specificity when the number of available data points changes. However, this remains to be confirmed in practice.
 
 The study has two important limitations. First, the calculations of box probabilities require that the process centre is fixed and known in advance, for example, the median from historical data. In practice the centre line is often determined from the actual data in the run chart, in which case the calculations of box probabilities do not apply. Preliminary studies suggest that this is mostly relevant for short data series. We plan to include a function in a future update of \CRANpkg{crossrun} to calculate the box probabilities with empirical centre lines.
 
