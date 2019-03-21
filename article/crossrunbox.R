@@ -29,18 +29,19 @@
 # Jacob Anhøj & Tore Wentzel-Larsen 21 Mar 2019
 ################################################################################
 
-# Load libraries ----
+system.time({
+
+  # Load libraries ----
 library(Rmpfr)
 library(crossrun)
 library(tidyverse)
 
 # Set parameters ----
 nmin     <- 10
-nmax     <- 40
-smax     <- 2
-
-shifts   <- seq(0, smax, by = 0.2)
+nmax     <- 100
+smax     <- 3
 target   <- 0.925
+shifts   <- seq(0, smax, by = 0.2)
 prec.use <- 120
 one      <- mpfr(1, prec.use)
 two      <- mpfr(2, prec.use)
@@ -193,7 +194,7 @@ bounds$lb <- NA
 
 for (nn in nmin:nmax) {
   print(paste('bestbox:', nn))
-  bounds[bounds$n == nn, c('cb', 'lb')] <- bestbox(n1 = nn)
+  bounds[bounds$n == nn, c('cb', 'lb')] <- bestbox(n1 = nn, target = target)
 }
 
 # find cut  boxes
@@ -204,6 +205,7 @@ for (nn in nmin:nmax) {
   print(paste('cutbox', nn))
   bounds[bounds$n == nn, c('cbord', 'lbord')] <-
     cutbox(n1 = nn,
+           target = target,
            c1 = bounds$cb[bounds$n == nn],
            l1 = bounds$lb[bounds$n == nn])
 }
@@ -318,6 +320,8 @@ boundspll_tall <- boundspll %>%
                            `cut box` = 'c')) %>% 
   spread(test, val)
 
+})
+
 # Figures ----
 ## Function to plot LC box figures
 crplot <- function(n = 11, labels = T) {
@@ -331,14 +335,14 @@ crplot <- function(n = 11, labels = T) {
   lbord <- boundspll$lbord[boundspll$n == n]
   pc    <- boundspll$pc_0.0[boundspll$n == n]
   pt    <- paste0('pt', n)
-  cr    <- lapply(crs$pt_0.0, asNumeric)
+  cr    <- map(crs$pt_0.0, asNumeric)
   
   d <- cr[[pt]] %>% 
     as_tibble(rownames = NA) %>% 
     rownames_to_column('C') %>% 
     gather('L', 'times', -C) %>% 
-    mutate(L = as.numeric(L),
-           C = as.numeric(C),
+    mutate(L = as.integer(L),
+           C = as.integer(C),
            p = times / sum(times),
            y = times,
            col = (times / max(times)) < 0.5 & (times / max(times)) > 0)

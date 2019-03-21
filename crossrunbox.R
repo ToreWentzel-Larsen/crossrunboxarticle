@@ -1,10 +1,47 @@
+################################################################################
+# This script reproduces the data objects and figures from the Smooth Operator
+# article by Jacob Anhøj and Tore Wentzel-Lars, R Journal 2019.
+#
+# The objects of interest are boundspll and crs.
+#
+# boundspll: a data frame with critical values for longest run and number of
+# crossings together with diagnostic values for false and true positive tests
+# for the Anhøj, best box and cut box rules. 
+# Variables:
+#   ca = lower limit for number of crossings, Anhøj rules. 
+#   la = upper limit for longest run, Anhøj rules. 
+#   cb = lower limit for number of crossings, best box rules. 
+#   lb = upper limit for longest run, best box rules. 
+#   cbord/lbord = coordinates for the cut box adjustment.
+#   pa_n.m/pb_n.m/pcbord_n.m = probality of no signal. n.m refers to the size of
+#     the shift in standard deviation units.
+#   loglrpos_n.m / loglrneg_n.m = positive and negative log-likehood ratios.
+#
+# crs: a list with probabilities for the joint distribution of number of
+# crossings (C) and longest run (L) in multiple precission (mpfr) format. To get
+# the matrix of probabilities for, say, N = 11 and no shift (SD = 0), use
+# crs$pt_0.0[[11]].
+# 
+# For the sake of speed and memory consumption the scrip is by default set to
+# produce output for N = 10-40 and SD = 0-2. To reproduce all data from the
+# article, change the parameters nmax and smax to 100 and 3 respectively.
+# 
+# Jacob Anhøj & Tore Wentzel-Larsen 21 Mar 2019
+################################################################################
+
+system.time({
+
+  # Load libraries ----
 library(Rmpfr)
 library(crossrun)
+library(tidyverse)
 
 # Set parameters ----
 nmin     <- 10
 nmax     <- 100
-shifts   <- seq(0, 3, by = 0.2)
+smax     <- 3
+target   <- 0.925
+shifts   <- seq(0, smax, by = 0.2)
 prec.use <- 120
 one      <- mpfr(1, prec.use)
 two      <- mpfr(2, prec.use)
@@ -14,7 +51,7 @@ nshifts  <- length(shifts)
 
 # bestbox function ----
 ## Function for box with lowest probability for the target shift, among boxes
-## with probability >= target for shift 0.
+## with probability >= target for shift = 0.
 bestbox <- function(pt0    = crs$pt_0.0,
                     pts    = crs$pt_0.8,
                     target = 0.925,
@@ -29,8 +66,8 @@ bestbox <- function(pt0    = crs$pt_0.0,
   targt   <- targetm * (multm ^ (n1 - 1)) # target on "times" scale
   pt0n    <- pt0[[n1]]
   ptsn    <- pts[[n1]]
-  bpt0    <- boxprobt(pt0n) # box probabilities for no shift
-  bpttarg <- boxprobt(ptsn) # box probabilities for target shift
+  bpt0    <- boxprobt(pt0n)  # box probabilities for no shift
+  bpttarg <- boxprobt(ptsn)  # box probabilities for target shift
   boxprt  <-
     two * (multm ^ (n1 - 1)) # initialize to impossible high value
   
@@ -43,15 +80,13 @@ bestbox <- function(pt0    = crs$pt_0.0,
         l1 <- ll
         boxprt <- bpttarg[cc + 1, ll]
       }
-    } # end search through (c, l) with positive no (, l)
+    }
   return(c(c1, l1))
 } # end function bestbox
 
 # cutbox function ----
-## Function for cutting a box while keeping probability >= target for shift 0. No
-## cutting if the corner cannot be removed. If the corner may be removed, it is
-## attempted to remove parts of the border, starting from the corner, in the
-## direction with highest point probability for the target shift:
+## Function for cutting a box while keeping probability >= target for shift = 0.
+## No cutting if the corner cannot be removed.
 cutbox <- function(pt0    = crs$pt_0.0,
                    pts    = crs$pt_0.8,
                    target = 0.925,
@@ -69,7 +104,7 @@ cutbox <- function(pt0    = crs$pt_0.0,
   pt0n      <- pt0[[n1]]
   ptsn      <- pts[[n1]]
   bpt0      <-
-    boxprobt(pt0n) # box probabilities for no shift, pt scale
+    boxprobt(pt0n)   # box probabilities for no shift, pt scale
   boxpt0    <-
     bpt0[c1 + 1, l1] # no shift probability of actual box, pt scale
   cornerpt0 <-
@@ -131,10 +166,11 @@ cutbox <- function(pt0    = crs$pt_0.0,
         lbord     <- lbord - 1
         cutboxpt0 <- cutboxpt0 - pt0n.directionl
       }
-    } # end while loop
-  } # end if corner may be removed
+    }
+  }
   return(c(cbord, lbord))
 } # end function cutbox
+
 
 # Compute joint distributions of C and L for n = 1, ..., nmax ----
 crs <- list()
@@ -158,7 +194,7 @@ bounds$lb <- NA
 
 for (nn in nmin:nmax) {
   print(paste('bestbox:', nn))
-  bounds[bounds$n == nn, c('cb', 'lb')] <- bestbox(n1 = nn)
+  bounds[bounds$n == nn, c('cb', 'lb')] <- bestbox(n1 = nn, target = target)
 }
 
 # find cut  boxes
@@ -169,6 +205,7 @@ for (nn in nmin:nmax) {
   print(paste('cutbox', nn))
   bounds[bounds$n == nn, c('cbord', 'lbord')] <-
     cutbox(n1 = nn,
+           target = target,
            c1 = bounds$cb[bounds$n == nn],
            l1 = bounds$lb[bounds$n == nn])
 }
@@ -269,28 +306,155 @@ boundspll <- cbind(
 ## Fix column names, pat -> pa etc.
 names(boundspll) <- sub("(^p.{1}).", "\\1\\", names(boundspll))
 
-# # Save objects ----
-# ## save boundspll with Rmpfr background arrays:
-# save(
-#   boundspll,
-#   pat, pbt, pct,
-#   pa, pb, pc,
-#   loglrposa, loglrposb, loglrposc,
-#   loglrnega, loglrnegb, loglrnegc,
-#   file = 'data/boundspll.Rdata'
-# )
-# 
-# ## save crs Rmpfr arrays
-# saveRDS(crs, 'data/crs_mpfr.rds')
-# 
-# ## save crs numeric arrays
-# crs_num <- lapply(crs, function(x) {
-#   lapply(x, asNumeric)
-# })
-# saveRDS(crs_num, 'data/crs_num.rds')
-# 
-# ## save cr distribution for shift = 0
-# saveRDS(cr_num$pt_0.0, 'data/cr_dist.rds')
-# 
-# ## save box limits and probabilities
-# saveRDS(boundspll, 'data/cr_bounds.rds')
+## Bounds data in tall format
+boundspll_tall <- boundspll %>% 
+  select(-(ca:lbord)) %>%
+  gather('key', 'val', -n) %>% 
+  separate(key, c('test', 'shift'), '_') %>% 
+  mutate(rule = substring(test, nchar(test)),
+         test = substring(test, 1, nchar(test) - 1),
+         shift = as.numeric(shift)) %>% 
+  mutate(rule = fct_recode(rule, 
+                           anhoej = 'a',
+                           `best box` = 'b',
+                           `cut box` = 'c')) %>% 
+  spread(test, val)
+
+})
+
+# Figures ----
+## Function to plot LC box figures
+crplot <- function(n = 11, labels = T) {
+  ca    <- boundspll$ca[boundspll$n == n]
+  la    <- boundspll$la[boundspll$n == n]
+  pa    <- boundspll$pa_0.0[boundspll$n == n]
+  cb    <- boundspll$cb[boundspll$n == n]
+  lb    <- boundspll$lb[boundspll$n == n]
+  pb    <- boundspll$pb_0.0[boundspll$n == n]
+  cbord <- boundspll$cbord[boundspll$n == n]
+  lbord <- boundspll$lbord[boundspll$n == n]
+  pc    <- boundspll$pc_0.0[boundspll$n == n]
+  pt    <- paste0('pt', n)
+  cr    <- map(crs$pt_0.0, asNumeric)
+  
+  d <- cr[[pt]] %>% 
+    as_tibble(rownames = NA) %>% 
+    rownames_to_column('C') %>% 
+    gather('L', 'times', -C) %>% 
+    mutate(L = as.integer(L),
+           C = as.integer(C),
+           p = times / sum(times),
+           y = times,
+           col = (times / max(times)) < 0.5 & (times / max(times)) > 0)
+  
+  p <- ggplot(d, aes(L, C, 
+                     fill = times > 0,
+                     alpha = times / max(times))) +
+    geom_raster() +
+    geom_rect(aes(xmin = 0.5,          # Anhoej box
+                  xmax = la + 0.5,
+                  ymin = ca - 0.5,
+                  ymax = max(C) + 0.5),
+              colour = '#F8766D',
+              size = 1,
+              fill   = NA) +
+    geom_rect(aes(xmin = 0.5,          # Best box
+                  xmax = lb + 0.5,
+                  ymin = cb - 0.5,
+                  ymax = max(C) + 0.5),
+              linetype = 2,
+              size = 1,
+              colour   = '#00BA38',
+              fill = NA) +
+    geom_rect(aes(xmin = lbord + 0.5,  # Cut box, horizontal
+                  xmax = lb + 0.5,
+                  ymin = cb - 0.5,
+                  ymax = cb + 0.5),
+              colour   = '#619CFF',
+              fill     = NA,
+              linetype = 4,
+              size = 1,
+              na.rm    = T) +
+    geom_rect(aes(xmin = lb - 0.5,     # Cut box, vertical
+                  xmax = lb + 0.5,
+                  ymin = cb - 0.5,
+                  ymax = cbord - 0.5), 
+              colour   = '#619CFF',
+              linetype = 4,
+              fill     = NA,
+              na.rm    = T)
+  
+  if(labels) {
+    p <- p +
+      geom_text(aes(label = y,
+                    colour = col),
+                alpha = 1,
+                size = 3)
+  }
+  
+  p <- p +
+    scale_y_reverse(breaks = 0:max(d$C)) +
+    scale_x_continuous(position = 'top',
+                       breaks = 1:max(d$L)) +
+    scale_fill_manual(values = c('white', 'black')) +
+    scale_colour_manual(values = c('white', 'black')) +
+    theme_minimal() +
+    theme(axis.title.y = element_text(angle = 0, hjust = 0),
+          axis.title.x = element_text(hjust = 0),
+          panel.grid.major = element_blank(),
+          aspect.ratio = 1,
+          legend.position = 'none') +
+    labs(caption = paste0('N =', n, '\n',
+                          'Rules specificity: ',
+                          'Anhøj = ', round(pa, 3), ', ',
+                          'Best Box = ', round(pb, 3), ', ',
+                          'Cut Box = ', round(pc, 3)))
+  plot(p)
+} # End crplot function
+
+crplot(11, labels = T)
+
+## Plot power function
+ggplot(boundspll_tall, aes(n, 1 - p, colour = rule)) +
+  geom_line(size = 1) +
+  facet_wrap(~ shift, ncol = 4) +
+  scale_x_continuous(breaks = seq(20, 100, by = 20)) +
+  theme_minimal() +
+  labs(title = 'Power function',
+       y = 'Probability of signal',
+       x = 'N')
+
+## Plot specificity
+ggplot(filter(boundspll_tall, shift == 0), aes(n, p, colour = rule)) +
+  geom_line(size = 1) +
+  scale_x_continuous(breaks = seq(20, 100, by = 20)) +
+  theme_minimal() +
+  labs(title = 'Specificity',
+       y = 'Probability of true negative',
+       x = 'N')
+
+## Plot LR+
+ggplot(filter(boundspll_tall, !is.na(loglrpos)), 
+       aes(n, exp(loglrpos), colour = rule)) +
+  geom_line(size = 0.75) +
+  geom_hline(yintercept = 10) +
+  facet_wrap(~ shift, ncol = 5) +
+  scale_y_log10() +
+  scale_x_continuous(breaks = seq(20, 100, by = 20)) +
+  theme_minimal() +
+  labs(title = 'Positive likelihood ratios',
+       y = 'LR+',
+       x = 'N')
+
+## Plot LR-
+ggplot(filter(boundspll_tall, !is.na(loglrpos)),
+       aes(n, exp(loglrneg), colour = rule)) +
+  geom_line(size = 0.75) +
+  geom_hline(yintercept = 0.1) +
+  facet_wrap(~ shift, ncol = 5) +
+  scale_y_log10() +
+  scale_x_continuous(breaks = seq(20, 100, by = 20)) +
+  theme_minimal() +
+  labs(title = 'Negative likelihood ratios',
+       y = 'LR-',
+       x = 'N')
