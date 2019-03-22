@@ -33,21 +33,21 @@ Several tests (or rules) based on the principles of runs analysis for detection 
 
 Collectively, we refer to these tests as the Anhøj rules, which are the default rules used for run and control chart analysis with the \CRANpkg{qicharts2} package \citep{qicharts2}. Critical values for run length and number of crossings depend on the total number of data points in the chart. The number of crossings follow a binomial distribution, $b(n - 1, 0.5)$, where n is the number of data points and 0.5 the success probability. Thus, the lower prediction limit for number of crossings may, for example, be set to the lower 5th percentile of the corresponding cumulative binomial distribution \citep{chen2010}. However, no closed form expression exists for the distribution of longest runs. Consequently, the upper prediction limit for longest runs has traditionally been either a fixed value (usually 7 or 8) \citep{carey2002a} or an approximate value depending on n as with the Anhøj rules: $log_2(n) + 3$ rounded to the nearest integer \citep{schilling2012}.
 
-Each of the two tests has an overall specificity (true negative proportion) around 95%. The sensitivity (true positive proportion) of a test depends on the size of the shift (signal) relative to the random variation inherent in the process (noise). When applied together, the sensitivity increases, while the specificity decreases a bit.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{fig_spec.pdf}
-  \caption{Specificity of the anhøj, best box, and cut box rules. N = number of data points in run chart. }
-  \label{figure:spec}
-\end{figure}
+Each of the two tests has an overall specificity (true negative proportion) around 95%. The sensitivity (true positive proportion) of a test depends on the size of the shift (signal) relative to the random variation inherent in the process (noise). When applied together, the sensitivity increases, while the specificity decreases a bit and fluctuates around 92.5% (Figure \ref{figure:spec}).
 
 Historically, runs tests have mainly been studied in isolation as individual tests. But what is really of interest, because the rules are linked -- when one goes up, the other goes down -- is the properties of the joint distribution of longest runs and number of crossings. We recently released an R package, \CRANpkg{crossrun} \citep{twl2018}, that includes functions for calculating the joint probabilities of the number of crossings (C) and longest runs (L) in random data series of different lengths (N) and with and without shifts in process location expressed in standard deviation units (SD). Figure \ref{figure:box11} illustrates this for a run chart with N = 11 and SD = 0 (no shift). To avoid very small numbers, the probabilities are shown using the times representation, that is, the probabilities times $2^{n-1}$, which is `r 2^(11-1)` for N = 11. The red box encloses the combinations of C and L that would indicate random variation according to the Anhøj rules (true negatives). The area outside the box represents combinations of C and L that would indicate non-random variation (false positives).
 
 \begin{figure}[htbp]
   \centering
+  \includegraphics[width=\textwidth]{fig_spec.pdf}
+  \caption{Specificity of the Anhøj, best box, and cut box rules. N = number of data points in run chart. }
+  \label{figure:spec}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
   \includegraphics[width=0.8\textwidth]{fig_box11.pdf}
-  \caption{Borders of the anhøj, best box, and cut box rules for N = 11 data points. 
+  \caption{Borders of the Anhøj, best box, and cut box rules for N = 11 data points. 
            C = number of crossings, L = longest run.
            The numbers in the cells are times representation of of the joint
            probabilities of longest run and number of crossings.
@@ -154,14 +154,14 @@ library(knitr)
 library(kableExtra)
 options(knitr.kable.NA = '')
 
-b <- readRDS('../data/boundspll.rds')
+b <- readRDS('../data/cr100_bounds.rds')
 # b <- b[, 1:7]
 b <- b[, c('n', 'ca', 'la', 'cb', 'lb', 'cbord', 'lbord', 
            'pa_0.0', 'pb_0.0', 'pc_0.0')]
 names(b) <- c('N', 'L', 'C', 'L', 'C', 'Cbord', 'Lbord', 
               'Anhøj', 'Best box', 'Cut box')
 
-cap <- 'Signal limits and specificity for the anhøj and best box rules and 
+cap <- 'Signal limits and specificity for the Anhøj and best box rules and 
         borders for the cut box rules. N = number of data points in chart.
         L = upper limit for longest run, C = lower limit for number of 
         crossings, Cbord and Lbord = cut box borders to keep.'

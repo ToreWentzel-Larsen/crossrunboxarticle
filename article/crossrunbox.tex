@@ -78,14 +78,8 @@ Each of the two tests has an overall specificity (true negative
 proportion) around 95\%. The sensitivity (true positive proportion) of a
 test depends on the size of the shift (signal) relative to the random
 variation inherent in the process (noise). When applied together, the
-sensitivity increases, while the specificity decreases a bit.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{fig_spec.pdf}
-  \caption{Specificity of the anhøj, best box, and cut box rules. N = number of data points in run chart. }
-  \label{figure:spec}
-\end{figure}
+sensitivity increases, while the specificity decreases a bit and
+fluctuates around 92.5\% (Figure \ref{figure:spec}).
 
 Historically, runs tests have mainly been studied in isolation as
 individual tests. But what is really of interest, because the rules are
@@ -106,8 +100,15 @@ that would indicate non-random variation (false positives).
 
 \begin{figure}[htbp]
   \centering
+  \includegraphics[width=\textwidth]{fig_spec.pdf}
+  \caption{Specificity of the Anhøj, best box, and cut box rules. N = number of data points in run chart. }
+  \label{figure:spec}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
   \includegraphics[width=0.8\textwidth]{fig_box11.pdf}
-  \caption{Borders of the anhøj, best box, and cut box rules for N = 11 data points. 
+  \caption{Borders of the Anhøj, best box, and cut box rules for N = 11 data points. 
            C = number of crossings, L = longest run.
            The numbers in the cells are times representation of of the joint
            probabilities of longest run and number of crossings.
@@ -337,7 +338,7 @@ adjustments of the Anhøj rules.
 \begin{Schunk}
 
 \begin{longtable}{rrrrrrrrrr}
-\caption{\label{tab:tab1}Signal limits and specificity for the anhøj and best box rules and 
+\caption{\label{tab:tab1}Signal limits and specificity for the Anhøj and best box rules and 
         borders for the cut box rules. N = number of data points in chart.
         L = upper limit for longest run, C = lower limit for number of 
         crossings, Cbord and Lbord = cut box borders to keep.}\\
@@ -347,7 +348,7 @@ adjustments of the Anhøj rules.
 N & L & C & L & C & Cbord & Lbord & Anhøj & Best box & Cut box\\
 \midrule
 \endfirsthead
-\caption[]{Signal limits and specificity for the anhøj and best box rules a \textit{(continued)}}\\
+\caption[]{Signal limits and specificity for the Anhøj and best box rules a \textit{(continued)}}\\
 \toprule
 \multicolumn{1}{c}{ } & \multicolumn{2}{c}{Anhøj} & \multicolumn{2}{c}{Best box} & \multicolumn{2}{c}{Cut box} & \multicolumn{3}{c}{Specificity} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-10}

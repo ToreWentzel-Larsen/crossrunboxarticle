@@ -1,59 +1,53 @@
-################################################################################
+# ###############################################################################
 # This script reproduces the data objects and figures from the Smooth Operator
-# article by Jacob Anhøj and Tore Wentzel-Lars, R Journal 2019.
+# article by Jacob Anhøj and Tore Wentzel-Larsen, R Journal 2019.
 #
-# The objects of interest are boundspll and crs.
+# The objects of interest are cr_dists and cr_bounds.
 #
-# boundspll: a data frame with critical values for longest run and number of
-# crossings together with diagnostic values for false and true positive tests
-# for the Anhøj, best box and cut box rules. 
+# cr_dists: a list with probabilities for the joint distribution of number of
+# crossings (C) and longest run (L) in multiple precision (mpfr) format. To get
+# the matrix of probabilities for, say, N = 11 and no shift (SD = 0), use
+# cr_dists$pt_0.0[[11]].
+#
+# cr_bounds: a data frame with critical values for longest run and number of
+# crossings together with probabilities and log-likelihood ratios for the Anhøj,
+# best box and cut box rules.
 # Variables:
 #   ca = lower limit for number of crossings, Anhøj rules. 
 #   la = upper limit for longest run, Anhøj rules. 
 #   cb = lower limit for number of crossings, best box rules. 
 #   lb = upper limit for longest run, best box rules. 
 #   cbord/lbord = coordinates for the cut box adjustment.
-#   pa_n.m/pb_n.m/pcbord_n.m = probality of no signal. n.m refers to the size of
-#     the shift in standard deviation units.
+#   pa_n.m/pb_n.m / pcbord_n.m = probality of no signal. n.m = size of the shift
+#                              in standard deviation units.
 #   loglrpos_n.m / loglrneg_n.m = positive and negative log-likehood ratios.
-#
-# crs: a list with probabilities for the joint distribution of number of
-# crossings (C) and longest run (L) in multiple precission (mpfr) format. To get
-# the matrix of probabilities for, say, N = 11 and no shift (SD = 0), use
-# crs$pt_0.0[[11]].
 # 
 # For the sake of speed and memory consumption the scrip is by default set to
 # produce output for N = 10-40 and SD = 0-2. To reproduce all data from the
 # article, change the parameters nmax and smax to 100 and 3 respectively.
 # 
-# Jacob Anhøj & Tore Wentzel-Larsen 21 Mar 2019
+# Jacob Anhøj & Tore Wentzel-Larsen 22 Mar 2019
 ################################################################################
 
-system.time({
-
-  # Load libraries ----
+# Load libraries ----
 library(Rmpfr)
 library(crossrun)
 library(tidyverse)
 
 # Set parameters ----
+nmax     <- 40      # Max N to include in computations.
+smax     <- 2       # Max shift in SD units to include in computations.
+target   <- 0.925   # Target specificity for best box and cut box.
+
+## No need to change anything below this line
 nmin     <- 10
-nmax     <- 100
-smax     <- 3
-target   <- 0.925
 shifts   <- seq(0, smax, by = 0.2)
-prec.use <- 120
-one      <- mpfr(1, prec.use)
-two      <- mpfr(2, prec.use)
-mone     <- mpfr(-1, prec.use)
-shiftsc  <- format(shifts, nsmall = 1)
-nshifts  <- length(shifts)
 
 # bestbox function ----
 ## Function for box with lowest probability for the target shift, among boxes
 ## with probability >= target for shift = 0.
-bestbox <- function(pt0    = crs$pt_0.0,
-                    pts    = crs$pt_0.8,
+bestbox <- function(pt0,
+                    pts,
                     target = 0.925,
                     n1     = 100,
                     mult   = 2,
@@ -87,8 +81,8 @@ bestbox <- function(pt0    = crs$pt_0.0,
 # cutbox function ----
 ## Function for cutting a box while keeping probability >= target for shift = 0.
 ## No cutting if the corner cannot be removed.
-cutbox <- function(pt0    = crs$pt_0.0,
-                   pts    = crs$pt_0.8,
+cutbox <- function(pt0,
+                   pts,
                    target = 0.925,
                    n1     = 100,
                    c1     = 41,
@@ -171,173 +165,181 @@ cutbox <- function(pt0    = crs$pt_0.0,
   return(c(cbord, lbord))
 } # end function cutbox
 
-
-# Compute joint distributions of C and L for n = 1, ..., nmax ----
-crs <- list()
-for (s in shifts) {
-  r <- paste0('pt_', format(s, nsmall = 1))
-  print(paste('Joint distribution:', r))
-  crs[[r]] <- crossrunshift(nmax, s)$pt
-}
-
-# Begin bounds table ----
-bounds <- data.frame(
-  n  = nmin:nmax,
-  ca = qbinom(0.05, nmin:nmax - 1, 0.5),
-  la = round(log2(nmin:nmax) + 3)
-)
-row.names(bounds) <- bounds$n
-
-# find best boxes
-bounds$cb <- NA
-bounds$lb <- NA
-
-for (nn in nmin:nmax) {
-  print(paste('bestbox:', nn))
-  bounds[bounds$n == nn, c('cb', 'lb')] <- bestbox(n1 = nn, target = target)
-}
-
-# find cut  boxes
-bounds$cbord <- NA
-bounds$lbord <- NA
-
-for (nn in nmin:nmax) {
-  print(paste('cutbox', nn))
-  bounds[bounds$n == nn, c('cbord', 'lbord')] <-
-    cutbox(n1 = nn,
-           target = target,
-           c1 = bounds$cb[bounds$n == nn],
-           l1 = bounds$lb[bounds$n == nn])
-}
-
-# Find no signal probabilities ----
-## initialize to impossible (negative) value:
-pat <- mpfr2array(rep(mone, (nmax - 9) * nshifts),
-                  dim = c((nmax - 9), nshifts),
-                  dimnames = list(nmin:nmax, NULL))
-
-pbt       <- pat
-pct       <- pat
-loglrposa <- pat[ , -1]
-loglrposb <- loglrposa
-loglrposc <- loglrposa
-loglrnega <- loglrposa
-loglrnegb <- loglrposa
-loglrnegc <- loglrposa
-
-colnames(pat)       <- paste0('pat_', shiftsc)
-colnames(pbt)       <- paste0('pbt_', shiftsc)
-colnames(pct)       <- paste0('pct_', shiftsc)
-colnames(loglrposa) <- paste0('loglrposa_', shiftsc[-1])
-colnames(loglrposb) <- paste0('loglrposb_', shiftsc[-1])
-colnames(loglrposc) <- paste0('loglrposc_', shiftsc[-1])
-colnames(loglrnega) <- paste0('loglrnega_', shiftsc[-1])
-colnames(loglrnegb) <- paste0('loglrnegb_', shiftsc[-1])
-colnames(loglrnegc) <- paste0('loglrnegc_', shiftsc[-1])
-
-## calculations
-for (nn in nmin:nmax) {
-  ca1    <- bounds$ca[bounds$n == nn]
-  la1    <- bounds$la[bounds$n == nn]
-  cb1    <- bounds$cb[bounds$n == nn]
-  lb1    <- bounds$lb[bounds$n == nn]
-  cbord1 <- bounds$cbord[bounds$n == nn]
-  lbord1 <- bounds$lbord[bounds$n == nn]
+# crs function to compute joint distributions of C and L ----
+crs <- function(nmax = 12,
+                shifts = seq(0, 2, by = 0.2)) {
   
+  crs <- list()
   for (s in shifts) {
-    i              <- match(s, shifts)
-    p              <- format(s, nsmall = 1)
-    p              <- paste0('pt_', p)
-    pat[nn - 9, i] <- sum(crs[[p]][[nn]][(ca1 + 1):nn, 1:la1])
-    pbt[nn - 9, i] <- sum(crs[[p]][[nn]][(cb1 + 1):nn, 1:lb1])
-    pct[nn - 9, i] <- pbt[nn - 9, i]
+    r <- paste0('pt_', format(s, nsmall = 1))
+    print(paste('Joint distribution:', r))
+    crs[[r]] <- crossrunshift(nmax, s)$pt
+  }
+  return(crs)
+} # End crs function
+
+# bounds function to compute limits and diagnostics for runs rules ----
+bounds <- function(crs, target = 0.925) {
+  nmin     <- 10
+  nmax     <- length(crs[[1]])
+  shiftsc  <- format(shifts, nsmall = 1)
+  nshifts  <- length(shifts)
+  prec.use <- 120
+  one      <- mpfr(1, prec.use)
+  two      <- mpfr(2, prec.use)
+  mone     <- mpfr(-1, prec.use)
+  pt0      <- crs$pt_0.0
+  pts      <- crs$pt_0.8
+  
+  # Begin bounds table
+  bounds <- data.frame(
+    n  = nmin:nmax,
+    ca = qbinom(0.05, nmin:nmax - 1, 0.5),
+    la = round(log2(nmin:nmax) + 3)
+  )
+  row.names(bounds) <- bounds$n
+  
+  # find best boxes
+  bounds$cb <- NA
+  bounds$lb <- NA
+  
+  for (nn in nmin:nmax) {
+    print(paste('bestbox:', nn))
+    bounds[bounds$n == nn, c('cb', 'lb')] <- bestbox(pt0,
+                                                     pts,
+                                                     n1 = nn,
+                                                     target = target)
+  }
+  
+  # find cut  boxes
+  bounds$cbord <- NA
+  bounds$lbord <- NA
+  
+  for (nn in nmin:nmax) {
+    print(paste('cutbox', nn))
+    bounds[bounds$n == nn, c('cbord', 'lbord')] <-
+      cutbox(pt0,
+             pts,
+             n1 = nn,
+             target = target,
+             c1 = bounds$cb[bounds$n == nn],
+             l1 = bounds$lb[bounds$n == nn])
+  }
+  
+  # Find no signal probabilities
+  ## initialize to impossible (negative) value:
+  pat <- mpfr2array(rep(mone, (nmax - 9) * nshifts),
+                    dim = c((nmax - 9), nshifts),
+                    dimnames = list(nmin:nmax, NULL))
+  
+  pbt       <- pat
+  pct       <- pat
+  loglrposa <- pat[ , -1]
+  loglrposb <- loglrposa
+  loglrposc <- loglrposa
+  loglrnega <- loglrposa
+  loglrnegb <- loglrposa
+  loglrnegc <- loglrposa
+  
+  colnames(pat)       <- paste0('pat_', shiftsc)
+  colnames(pbt)       <- paste0('pbt_', shiftsc)
+  colnames(pct)       <- paste0('pct_', shiftsc)
+  colnames(loglrposa) <- paste0('loglrposa_', shiftsc[-1])
+  colnames(loglrposb) <- paste0('loglrposb_', shiftsc[-1])
+  colnames(loglrposc) <- paste0('loglrposc_', shiftsc[-1])
+  colnames(loglrnega) <- paste0('loglrnega_', shiftsc[-1])
+  colnames(loglrnegb) <- paste0('loglrnegb_', shiftsc[-1])
+  colnames(loglrnegc) <- paste0('loglrnegc_', shiftsc[-1])
+  
+  ## calculations
+  for (nn in nmin:nmax) {
+    ca1    <- bounds$ca[bounds$n == nn]
+    la1    <- bounds$la[bounds$n == nn]
+    cb1    <- bounds$cb[bounds$n == nn]
+    lb1    <- bounds$lb[bounds$n == nn]
+    cbord1 <- bounds$cbord[bounds$n == nn]
+    lbord1 <- bounds$lbord[bounds$n == nn]
     
-    if (!is.na(cbord1)) {
-      pct[nn - 9, i] <- 
-        sum(crs[[p]][[nn]][(cb1 + 2):nn, 1:(lb1 - 1)]) +
-        sum(crs[[p]][[nn]][(cbord1 + 1):nn, lb1]) +
-        sum(crs[[p]][[nn]][cb1 + 1, 1:lbord1])
+    for (s in shifts) {
+      i              <- match(s, shifts)
+      p              <- format(s, nsmall = 1)
+      p              <- paste0('pt_', p)
+      pat[nn - 9, i] <- sum(crs[[p]][[nn]][(ca1 + 1):nn, 1:la1])
+      pbt[nn - 9, i] <- sum(crs[[p]][[nn]][(cb1 + 1):nn, 1:lb1])
+      pct[nn - 9, i] <- pbt[nn - 9, i]
+      
+      if (!is.na(cbord1)) {
+        pct[nn - 9, i] <- 
+          sum(crs[[p]][[nn]][(cb1 + 2):nn, 1:(lb1 - 1)]) +
+          sum(crs[[p]][[nn]][(cbord1 + 1):nn, lb1]) +
+          sum(crs[[p]][[nn]][cb1 + 1, 1:lbord1])
+      }
     }
   }
-}
-
-# Find likelihood ratios ----
-for (s in shiftsc[shifts > 0]) {
-  pats <- paste0('pat_', s)
-  pbts <- paste0('pbt_', s)
-  pcts <- paste0('pct_', s)
-  loglrposa1 <- paste0('loglrposa_', s)
-  loglrposb1 <- paste0('loglrposb_', s)
-  loglrposc1 <- paste0('loglrposc_', s)
-  loglrnega1 <- paste0('loglrnega_', s)
-  loglrnegb1 <- paste0('loglrnegb_', s)
-  loglrnegc1 <- paste0('loglrnegc_', s)
   
-  loglrposa[, loglrposa1] <-
-    log(two ^ (nmin:nmax - 1) - pat[, pats]) - 
-    log(two ^ (nmin:nmax - 1) - pat[, 'pat_0.0'])
-  loglrposb[, loglrposb1] <-
-    log(two ^ (nmin:nmax - 1) - pbt[, pbts]) - 
-    log(two ^ (nmin:nmax - 1) - pbt[, 'pbt_0.0'])
-  loglrposc[, loglrposc1] <-
-    log(two ^ (nmin:nmax - 1) - pct[, pcts]) - 
-    log(two ^ (nmin:nmax - 1) - pct[, 'pct_0.0'])
+  # Find likelihood ratios
+  for (s in shiftsc[shifts > 0]) {
+    pats <- paste0('pat_', s)
+    pbts <- paste0('pbt_', s)
+    pcts <- paste0('pct_', s)
+    loglrposa1 <- paste0('loglrposa_', s)
+    loglrposb1 <- paste0('loglrposb_', s)
+    loglrposc1 <- paste0('loglrposc_', s)
+    loglrnega1 <- paste0('loglrnega_', s)
+    loglrnegb1 <- paste0('loglrnegb_', s)
+    loglrnegc1 <- paste0('loglrnegc_', s)
+    
+    loglrposa[, loglrposa1] <-
+      log(two ^ (nmin:nmax - 1) - pat[, pats]) - 
+      log(two ^ (nmin:nmax - 1) - pat[, 'pat_0.0'])
+    loglrposb[, loglrposb1] <-
+      log(two ^ (nmin:nmax - 1) - pbt[, pbts]) - 
+      log(two ^ (nmin:nmax - 1) - pbt[, 'pbt_0.0'])
+    loglrposc[, loglrposc1] <-
+      log(two ^ (nmin:nmax - 1) - pct[, pcts]) - 
+      log(two ^ (nmin:nmax - 1) - pct[, 'pct_0.0'])
+    
+    loglrnega[, loglrnega1] <-
+      log(pat[, pats]) - log(pat[, 'pat_0.0'])
+    loglrnegb[, loglrnegb1] <-
+      log(pbt[, pbts]) - log(pbt[, 'pbt_0.0'])
+    loglrnegc[, loglrnegc1] <-
+      log(pct[, pcts]) - log(pct[, 'pct_0.0'])
+  }
   
-  loglrnega[, loglrnega1] <-
-    log(pat[, pats]) - log(pat[, 'pat_0.0'])
-  loglrnegb[, loglrnegb1] <-
-    log(pbt[, pbts]) - log(pbt[, 'pbt_0.0'])
-  loglrnegc[, loglrnegc1] <-
-    log(pct[, pcts]) - log(pct[, 'pct_0.0'])
-}
+  # Finish bounds table including probability information
+  pa <- pat / (two ^ (nmin:nmax - 1))
+  pb <- pbt / (two ^ (nmin:nmax - 1))
+  pc <- pct / (two ^ (nmin:nmax - 1))
+  
+  bounds <- cbind(
+    bounds,
+    asNumeric(pa),        asNumeric(pb),        asNumeric(pc),
+    asNumeric(loglrposa), asNumeric(loglrposb), asNumeric(loglrposc),
+    asNumeric(loglrnega), asNumeric(loglrnegb), asNumeric(loglrnegc)
+  )
+  
+  ## Fix column names, pat -> pa etc.
+  names(bounds) <- sub("(^p.{1}).", "\\1\\", names(bounds))
+  
+  return(bounds)
+} # End bounds function
 
-# Finish bounds table including probability information ----
-pa <- pat / (two ^ (nmin:nmax - 1))
-pb <- pbt / (two ^ (nmin:nmax - 1))
-pc <- pct / (two ^ (nmin:nmax - 1))
-
-boundspll <- cbind(
-  bounds,
-  asNumeric(pa),        asNumeric(pb),        asNumeric(pc),
-  asNumeric(loglrposa), asNumeric(loglrposb), asNumeric(loglrposc),
-  asNumeric(loglrnega), asNumeric(loglrnegb), asNumeric(loglrnegc)
-)
-
-## Fix column names, pat -> pa etc.
-names(boundspll) <- sub("(^p.{1}).", "\\1\\", names(boundspll))
-
-## Bounds data in tall format
-boundspll_tall <- boundspll %>% 
-  select(-(ca:lbord)) %>%
-  gather('key', 'val', -n) %>% 
-  separate(key, c('test', 'shift'), '_') %>% 
-  mutate(rule = substring(test, nchar(test)),
-         test = substring(test, 1, nchar(test) - 1),
-         shift = as.numeric(shift)) %>% 
-  mutate(rule = fct_recode(rule, 
-                           anhoej = 'a',
-                           `best box` = 'b',
-                           `cut box` = 'c')) %>% 
-  spread(test, val)
-
-})
-
-# Figures ----
-## Function to plot LC box figures
-crplot <- function(n = 11, labels = T) {
-  ca    <- boundspll$ca[boundspll$n == n]
-  la    <- boundspll$la[boundspll$n == n]
-  pa    <- boundspll$pa_0.0[boundspll$n == n]
-  cb    <- boundspll$cb[boundspll$n == n]
-  lb    <- boundspll$lb[boundspll$n == n]
-  pb    <- boundspll$pb_0.0[boundspll$n == n]
-  cbord <- boundspll$cbord[boundspll$n == n]
-  lbord <- boundspll$lbord[boundspll$n == n]
-  pc    <- boundspll$pc_0.0[boundspll$n == n]
+# crplot function to plot joint CL probabilites and box bounds ----
+crplot <- function(bounds, cr_dists, n = 11, labels = T) {
+  ca    <- bounds$ca[bounds$n == n]
+  la    <- bounds$la[bounds$n == n]
+  pa    <- bounds$pa_0.0[bounds$n == n]
+  cb    <- bounds$cb[bounds$n == n]
+  lb    <- bounds$lb[bounds$n == n]
+  pb    <- bounds$pb_0.0[bounds$n == n]
+  cbord <- bounds$cbord[bounds$n == n]
+  lbord <- bounds$lbord[bounds$n == n]
+  pc    <- bounds$pc_0.0[bounds$n == n]
   pt    <- paste0('pt', n)
-  cr    <- map(crs$pt_0.0, asNumeric)
+  # cr    <- crs
   
-  d <- cr[[pt]] %>% 
+  d <- cr_dists[[pt]] %>% 
     as_tibble(rownames = NA) %>% 
     rownames_to_column('C') %>% 
     gather('L', 'times', -C) %>% 
@@ -412,10 +414,33 @@ crplot <- function(n = 11, labels = T) {
   plot(p)
 } # End crplot function
 
-crplot(11, labels = T)
+# Create data objects ----
+## Joint distribution matrices
+cr_dists    <- crs(nmax, shifts)
+
+## Data frame with limits and diagnostics for runs rules
+cr_bounds <- bounds(cr_dists, target)
+
+## Bounds data in tall format
+cr_bounds_tall <- cr_bounds %>% 
+  select(-(ca:lbord)) %>%
+  gather('key', 'val', -n) %>% 
+  separate(key, c('test', 'shift'), '_') %>% 
+  mutate(rule = substring(test, nchar(test)),
+         test = substring(test, 1, nchar(test) - 1),
+         shift = as.numeric(shift)) %>% 
+  mutate(rule = fct_recode(rule, 
+                           anhoej = 'a',
+                           `best box` = 'b',
+                           `cut box` = 'c')) %>% 
+  spread(test, val)
+
+# Figures ----
+## Plot joint distribution matrix
+crplot(cr_bounds, map(cr_dists$pt_0.0, asNumeric), 11, labels = T)
 
 ## Plot power function
-ggplot(boundspll_tall, aes(n, 1 - p, colour = rule)) +
+ggplot(cr_bounds_tall, aes(n, 1 - p, colour = rule)) +
   geom_line(size = 1) +
   facet_wrap(~ shift, ncol = 4) +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
@@ -425,7 +450,7 @@ ggplot(boundspll_tall, aes(n, 1 - p, colour = rule)) +
        x = 'N')
 
 ## Plot specificity
-ggplot(filter(boundspll_tall, shift == 0), aes(n, p, colour = rule)) +
+ggplot(filter(cr_bounds_tall, shift == 0), aes(n, p, colour = rule)) +
   geom_line(size = 1) +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
   theme_minimal() +
@@ -434,7 +459,7 @@ ggplot(filter(boundspll_tall, shift == 0), aes(n, p, colour = rule)) +
        x = 'N')
 
 ## Plot LR+
-ggplot(filter(boundspll_tall, !is.na(loglrpos)), 
+ggplot(filter(cr_bounds_tall, !is.na(loglrpos)), 
        aes(n, exp(loglrpos), colour = rule)) +
   geom_line(size = 0.75) +
   geom_hline(yintercept = 10) +
@@ -447,7 +472,7 @@ ggplot(filter(boundspll_tall, !is.na(loglrpos)),
        x = 'N')
 
 ## Plot LR-
-ggplot(filter(boundspll_tall, !is.na(loglrpos)),
+ggplot(filter(cr_bounds_tall, !is.na(loglrpos)),
        aes(n, exp(loglrneg), colour = rule)) +
   geom_line(size = 0.75) +
   geom_hline(yintercept = 0.1) +

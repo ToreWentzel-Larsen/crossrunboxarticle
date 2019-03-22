@@ -1,10 +1,10 @@
 # Setup ----
 library(tidyverse)
 
-save.plots <- T
+save.plots <- F
 
-x <- read_rds('data/cr_dist.rds')
-b <- read_rds('data/cr_bounds.rds')
+x <- read_rds('data/cr100_sym.rds')
+b <- read_rds('data/cr100_bounds.rds')
 
 ## Tall parameter value data
 vals <- b %>% 
