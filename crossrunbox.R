@@ -35,11 +35,12 @@ library(crossrun)
 library(tidyverse)
 
 # Set parameters ----
-nmax     <- 40      # Max N to include in computations.
-smax     <- 2       # Max shift in SD units to include in computations.
-target   <- 0.925   # Target specificity for best box and cut box.
+nmax         <- 40      # Max N to include in computations.
+smax         <- 2       # Max shift in SD units to include in computations.
+target       <- 0.925   # Target specificity for best box and cut box.
+target_shift <- 0.8     # Target shift for best box and cut box.
 
-## No need to change anything below this line
+## Probably no need to change anything below this line
 nmin     <- 10
 shifts   <- seq(0, smax, by = 0.2)
 
@@ -179,7 +180,7 @@ crs <- function(nmax = 12,
 } # End crs function
 
 # bounds function to compute limits and diagnostics for runs rules ----
-bounds <- function(crs, target = 0.925) {
+bounds <- function(crs, target = 0.925, target_shift = 0.8) {
   nmin     <- 10
   nmax     <- length(crs[[1]])
   shiftsc  <- format(shifts, nsmall = 1)
@@ -189,7 +190,8 @@ bounds <- function(crs, target = 0.925) {
   two      <- mpfr(2, prec.use)
   mone     <- mpfr(-1, prec.use)
   pt0      <- crs$pt_0.0
-  pts      <- crs$pt_0.8
+  # pts      <- crs$pt_0.8
+  pts      <- crs[[paste0('pt_', format(target_shift, nsmall = 1))]]
   
   # Begin bounds table
   bounds <- data.frame(
@@ -419,7 +421,7 @@ crplot <- function(bounds, cr_dists, n = 11, labels = T) {
 cr_dists    <- crs(nmax, shifts)
 
 ## Data frame with limits and diagnostics for runs rules
-cr_bounds <- bounds(cr_dists, target)
+cr_bounds <- bounds(cr_dists, target, target_shift)
 
 ## Bounds data in tall format
 cr_bounds_tall <- cr_bounds %>% 
@@ -483,3 +485,4 @@ ggplot(filter(cr_bounds_tall, !is.na(loglrpos)),
   labs(title = 'Negative likelihood ratios',
        y = 'LR-',
        x = 'N')
+
