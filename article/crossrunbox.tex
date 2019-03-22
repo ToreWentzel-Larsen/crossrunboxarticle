@@ -79,24 +79,24 @@ proportion) around 95\%. The sensitivity (true positive proportion) of a
 test depends on the size of the shift (signal) relative to the random
 variation inherent in the process (noise). When applied together, the
 sensitivity increases, while the specificity decreases a bit and
-fluctuates around 92.5\% (Figure \ref{figure:spec}).
+fluctuates around 92.5\% (see red line in Figure \ref{figure:spec}).
 
 Historically, runs tests have mainly been studied in isolation as
 individual tests. But what is really of interest, because the rules are
 linked -- when one goes up, the other goes down -- is the properties of
-the joint distribution of longest runs and number of crossings. We
-recently released an R package, \CRANpkg{crossrun} \citep{twl2018}, that
-includes functions for calculating the joint probabilities of the number
-of crossings (C) and longest runs (L) in random data series of different
-lengths (N) and with and without shifts in process location expressed in
-standard deviation units (SD). Figure \ref{figure:box11} illustrates
-this for a run chart with N = 11 and SD = 0 (no shift). To avoid very
-small numbers, the probabilities are shown using the times
-representation, that is, the probabilities times \(2^{n-1}\), which is
-1024 for N = 11. The red box encloses the combinations of C and L that
-would indicate random variation according to the Anhøj rules (true
-negatives). The area outside the box represents combinations of C and L
-that would indicate non-random variation (false positives).
+the joint distribution of number of crossings (C) and longest runs (L).
+We recently released an R package, \CRANpkg{crossrun} \citep{twl2018},
+that includes functions for calculating the joint probabilities of C and
+L in random data series of different lengths (N) and with and without
+shifts in process location expressed in standard deviation units (SD).
+Figure \ref{figure:box11} illustrates this for a run chart with N = 11
+and SD = 0 (no shift). To avoid very small numbers, the probabilities
+are shown using the times representation, that is, the probabilities
+times \(2^{n-1}\), which is 1024 for N = 11. The red box encloses the
+combinations of C and L that would indicate random variation according
+to the Anhøj rules (true negatives). The area outside the box represents
+combinations of C and L that would indicate non-random variation (false
+positives).
 
 \begin{figure}[htbp]
   \centering
@@ -132,8 +132,9 @@ hypothesised that it would be possible to improve the diagnostic value
 further by smoothing the specificity using minor adjustments to C and L
 depending on N.
 
-The aim of this study was to suggest a procedure for smoothing the
-diagnostic properties of the Anhøj runs rules.
+The aims of this study were to provide exact values for the diagnostic
+properties of the Anhøj rules and to suggest a ``smoothing'' procedure
+for improving the value of runs analysis.
 
 \hypertarget{methods}{%
 \subsection{Methods}\label{methods}}
@@ -288,8 +289,8 @@ seen by the fact that LR+ \textgreater{} 10 for SD \textgreater{} 1 and
 N \(\geq\) 10. Although, the best box and cut box procedures will not
 change this, the box adjustments may potentially improve the practical
 value of runs analysis by reducing sudden shifts in sensitivity and
-specificity when the number of available data points changes. However,
-this remains to be confirmed in practice.
+specificity when the number of available data points changes. Whether
+this holds true in practice remains to be confirmed.
 
 The study has two important limitations. First, the calculations of box
 probabilities require that the process centre is fixed and known in
@@ -314,8 +315,11 @@ procedures for larger N may be impractical at the moment.
 
 Also, one should be aware that the value of the box procedures rely on
 the choice of target specificity and target shift values. Other target
-values may give very different diagnostic properties. By supplying the R
-code, we encourage users to adapt our findings to their own needs.
+values will give different diagnostic properties. Preliminary studies
+suggest that increasing the target specificity to, say, 0.95 in fact
+increases the positive likelihood ratios a bit without affecting the
+negative likehood ratios considerably. By supplying the R code, we
+encourage users to adapt our findings to their own needs.
 
 Regarding the practical application of the box adjustment of the Anhøj
 rules, we are in the process of testing a \code{method} argument for the
@@ -328,8 +332,8 @@ life data.
 
 In conclusion, this study provided exact values for the diagnostic
 properties of the Anhøj rules for run charts with 10-100 data points
-with shifts up to 3 standard deviation units, and demonstrated that it
-is feasible to reduce the variability in run chart specificity from
+including shifts up to 3 standard deviation units, and demonstrated that
+it is feasible to reduce the variability in run chart specificity from
 varying number of data points by using the best box and cut box
 adjustments of the Anhøj rules.
 
