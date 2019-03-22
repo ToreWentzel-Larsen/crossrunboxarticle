@@ -164,7 +164,11 @@ names(b) <- c('N', 'L', 'C', 'L', 'C', 'Cbord', 'Lbord',
 cap <- 'Signal limits and specificity for the Anhøj and best box rules and 
         borders for the cut box rules. N = number of data points in chart.
         L = upper limit for longest run, C = lower limit for number of 
-        crossings, Cbord and Lbord = cut box borders to keep.'
+        crossings, for declaring random variation by the Anhøj and best 
+        box rules. Cbord and Lbord = Additional information for the cut box
+        rules. When specified, parts of the border of the best box to retain 
+        to declare random variation. When not specified, cut box is identical
+        to best box. '
 
 kable(b,
       format = 'latex',
