@@ -1,7 +1,8 @@
 # Setup ----
 library(tidyverse)
+library(qicharts2)
 
-save.plots <- F
+save.plots <- T
 
 x <- read_rds('data/cr100_sym.rds')
 b <- read_rds('data/cr100_bounds.rds')
@@ -20,6 +21,15 @@ vals <- b %>%
                            `cut box` = 'c')) %>% 
   spread(test, val)
 
+# Run chart ----
+set.seed(4)
+qic(rnorm(20, 3),
+    title = 'Run chart',
+    ylab = 'Indicator value',
+    xlab = 'Time/order')
+if(save.plots)
+  ggsave('figures/fig_run.pdf', height = 4, width = 8)
+
 # Plot power function ----
 ggplot(vals, aes(n, 1 - p, colour = rule)) +
   geom_line(size = 1) +
@@ -30,7 +40,7 @@ ggplot(vals, aes(n, 1 - p, colour = rule)) +
        y = 'Probability of signal',
        x = 'N')
 if(save.plots)
-  ggsave('figures/fig_pwr.pdf')
+  ggsave('figures/fig_pwr.pdf', height = 6, width = 8)
 
 ## Specificity
 ggplot(filter(vals, shift == 0), aes(n, p, colour = rule)) +
@@ -41,7 +51,7 @@ ggplot(filter(vals, shift == 0), aes(n, p, colour = rule)) +
        y = 'Probability of true negative',
        x = 'N')
 if(save.plots)
-  ggsave('figures/fig_spec.pdf')
+  ggsave('figures/fig_spec.pdf', height = 4, width = 8)
 
 # Plot likelihood ratios ----
 ## LR+
@@ -57,7 +67,7 @@ ggplot(filter(vals, !is.na(loglrpos)),
        y = 'LR+',
        x = 'N')
 if(save.plots)
-  ggsave('figures/fig_lrpos.pdf')
+  ggsave('figures/fig_lrpos.pdf', height = 5, width = 8)
 
 ## LR-
 ggplot(filter(vals, !is.na(loglrpos)),
@@ -72,7 +82,7 @@ ggplot(filter(vals, !is.na(loglrpos)),
        y = 'LR-',
        x = 'N')
 if(save.plots)
-  ggsave('figures/fig_lrneg.pdf')
+  ggsave('figures/fig_lrneg.pdf', height = 5, width = 8)
 
 # Function to plot LC box figures ----
 crplot <- function(n = 11, labels = T) {

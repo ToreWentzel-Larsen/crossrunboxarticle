@@ -1,5 +1,5 @@
 ---
-title: Smooth Operator -- Modifying the Anhøj Rules to Improve Runs Analysis in Statistical Process Control
+title: "Smooth Operator: Modifying the Anhøj Rules to Improve Runs Analysis in Statistical Process Control"
 author:
   - name: Jacob Anhøj
     affiliation: Rigshospitalet, University of Copenhagen
@@ -12,7 +12,7 @@ author:
     - Norway
     email:  tore.wentzellarsen@gmail.com
 abstract: >
-  Run charts is one form of statistical process control charts that is particularly useful for detecting minor to moderate shifts in data over time. The Anhøj rules test for shifts by looking for unusually long runs (L) of data points on the same side of the process centre (mean or median) and unusually few crossings (C) of the centre line. The critical values for C and L depend on the number of available data points (N). Consequently, the diagnostic properties (e.g. sensitivity and specificity) of the Anhøj rules also depend on N and have a rugged appearance due to the discrete nature of the tests. This study demonstrates that it is possible to obtain better diagnostic properties by making minor adjustment to the critical values for C and L. We refer to these procedures as the best box and cut box adjustment procedures.
+  The run charts is one form of statistical process control charts that is particularly useful for detecting minor to moderate shifts in data over time. The Anhøj rules test for shifts by looking for unusually long runs (L) of data points on the same side of the process centre (mean or median) and unusually few crossings (C) of the centre. The critical values for C and L depend on the number of available data points (N). Consequently, the diagnostic properties (e.g. sensitivity and specificity) of the Anhøj rules also depend on N and have a rugged appearance due to the discrete nature of the tests. This study demonstrates that it is possible to obtain better diagnostic properties by making minor adjustment to the critical values for C and L. We refer to these procedures as the best box and cut box adjustment procedures.
 output:
   rticles::rjournal_article:
     includes:
@@ -24,6 +24,13 @@ output:
 Within statistical process control (SPC) runs analysis is being used to detect persistent shifts in process location over time \citep{anhoej2018}.
 
 Runs analysis deals with the natural limits of number of runs and run lengths in random processes. A run is a series of one or more consecutive elements of the same kind, for example heads and tails, diseased and non-diseased individuals, or numbers above or below a certain value. A run chart is a point-and-line chart showing data over time with the median as reference line. In a random process, the data points will be randomly distributed around the median, and the number and lengths of runs will be predictable within limits. All things being equal, if the process shifts, runs tend to become longer and fewer. Consequently, runs analysis may help detect shifts in process location. Process shifts are one form of non-random variation in time series data that are of particular interest to quality control and improvement: If a process shifts, it may be the result of planned improvement or unwanted deterioration.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig_run.pdf}
+  \caption{Run chart. Median = 3.2, longest run (L) = 4, number of crossings (C) = 9.}
+  \label{figure:run}
+\end{figure}
 
 Several tests (or rules) based on the principles of runs analysis for detection of shifts exist. In previous papers we demonstrated, using simulated data series, that the currently best performing rules with respect to sensitivity and specificity to shifts in process location are two simple tests \citep{anhoej2014, anhoej2015, anhoej2018}:
 
@@ -46,7 +53,7 @@ Historically, runs tests have mainly been studied in isolation as individual tes
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.8\textwidth]{fig_box11.pdf}
+  \includegraphics[width=\textwidth]{fig_box11.pdf}
   \caption{Borders of the Anhøj, best box, and cut box rules for N = 11 data points. 
            C = number of crossings, L = longest run.
            The numbers in the cells are times representation of of the joint
@@ -57,7 +64,7 @@ Historically, runs tests have mainly been studied in isolation as individual tes
 
 With the \CRANpkg{crossrun} package it became feasible to calculate exact joint probabilities of C and L over a wide range of N and SD. And consequently, it became feasible to investigate the diagnostic properties of run charts using exact values for specificity and sensitivity rather than values based on time consuming, inaccurate, and complicated simulation studies.
 
-As is clearly visible in Figure \ref{figure:spec} the specificity of the Anhøj rules (red line) jumps up and down as N changes. This is a consequence of the discrete nature of the two tests -- especially the shifts test. Although the specificity of the Anhøj rules does not decrease continuously as N increases as is the case with other rules, we hypothesised that it would be possible to improve the diagnostic value further by smoothing the specificity using minor adjustments to C and L depending on N.
+As is clearly visible in Figure \ref{figure:spec} the specificity of the Anhøj rules (red line) jumps up and down as N changes. This is a consequence of the discrete nature of the two tests -- especially the shifts test. Although the specificity of the Anhøj rules does not decrease continuously as N increases, which is the case for other rules \citep{anhoej2014}, we hypothesised that it would be possible to improve the diagnostic value further by smoothing the specificity using minor adjustments to C and L depending on N.
 
 The aims of this study were to  provide exact values for the diagnostic properties of the Anhøj rules and to suggest a "smoothing" procedure for improving the value of runs analysis.
 
@@ -149,6 +156,8 @@ In conclusion, this study provided exact values for the diagnostic properties of
 
 \bibliography{RJreferences}
 
+\newpage
+
 ```{r, echo=FALSE}
 library(knitr)
 library(kableExtra)
@@ -157,12 +166,15 @@ options(knitr.kable.NA = '')
 b <- readRDS('../data/cr100_bounds.rds')
 # b <- b[, 1:7]
 b <- b[, c('n', 'ca', 'la', 'cb', 'lb', 'cbord', 'lbord', 
-           'pa_0.0', 'pb_0.0', 'pc_0.0')]
+           'pa_0.0', 'pb_0.0', 'pc_0.0',
+           'pa_0.8', 'pb_0.8', 'pc_0.8')]
 names(b) <- c('N', 'L', 'C', 'L', 'C', 'Cbord', 'Lbord', 
+              'Anhøj', 'Best box', 'Cut box',
               'Anhøj', 'Best box', 'Cut box')
 
-cap <- 'Signal limits and specificity for the Anhøj and best box rules and 
-        borders for the cut box rules. N = number of data points in chart.
+cap <- 'Signal limits, specificity, and sensitivity for the Anhøj and best box
+        rules and borders for the cut box rules. N = number of data points in
+        chart.
         L = upper limit for longest run, C = lower limit for number of 
         crossings, for declaring random variation by the Anhøj and best 
         box rules. Cbord and Lbord = Additional information for the cut box
@@ -182,6 +194,7 @@ kable(b,
                      'Anhøj' = 2, 
                      'Best box' = 2, 
                      'Cut box' = 2, 
-                     'Specificity' = 3)) %>%
+                     'Specificity, shift = 0.0 SD' = 3,
+                     'Sensitivity, shift = 0.8 SD' = 3)) %>%
   kable_styling(latex_options = 'repeat_header')
 ```
