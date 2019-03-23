@@ -170,19 +170,18 @@ b <- readRDS('../data/cr100_bounds.rds')
 b <- b[, c('n', 'ca', 'la', 'cb', 'lb', 'cbord', 'lbord', 
            'pa_0.0', 'pb_0.0', 'pc_0.0',
            'pa_0.8', 'pb_0.8', 'pc_0.8')]
-names(b) <- c('N', 'L', 'C', 'L', 'C', 'Cbord', 'Lbord', 
+names(b) <- c('N', 'C', 'L', 'C', 'L', 'Cbord', 'Lbord', 
               'Anhøj', 'Best box', 'Cut box',
               'Anhøj', 'Best box', 'Cut box')
 
 cap <- 'Signal limits, specificity, and sensitivity for the Anhøj and best box
         rules and borders for the cut box rules. N = number of data points in
         chart.
-        L = upper limit for longest run, C = lower limit for number of 
-        crossings, for declaring random variation by the Anhøj and best 
-        box rules. Cbord and Lbord = Additional information for the cut box
-        rules. When specified, parts of the border of the best box to retain 
-        to declare random variation. When not specified, cut box is identical
-        to best box. '
+        C = lower limit for number of crossings, L = upper limit for longest 
+        run,  for declaring random variation by the Anhøj and best box rules. 
+        Cbord and Lbord = Additional information for the cut box rules. When
+        specified, parts of the border of the best box to retain to declare
+        random variation. When not specified, cut box is identical to best box.'
 
 kable(b,
       format = 'latex',
