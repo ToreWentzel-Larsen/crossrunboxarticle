@@ -19,7 +19,7 @@ output:
       in_header: preamble.tex
 ---
 
-## Introduction
+# Introduction
 
 Within statistical process control (SPC) runs analysis is being used to detect persistent shifts in process location over time \citep{anhoej2018}.
 
@@ -72,9 +72,9 @@ As shown in Figure \ref{figure:spec} the specificity of the Anhøj rules (red li
 
 The aims of this study were to  provide exact values for the diagnostic properties of the Anhøj rules and to suggest a "smoothing" procedure for improving the value of runs analysis.
 
-## Methods
+# Methods
 
-### Likelihood ratios to quantify the diagnostic value of runs rules
+## Likelihood ratios to quantify the diagnostic value of runs rules
 
 The value of a diagnostic test is traditionally described using terms like sensitivity and specificity. These parameters express the probability of detecting the condition being tested for when it is present and not detecting it when it is absent:
 
@@ -88,7 +88,7 @@ $$ \text{LR- = FN/TN = (1} - \text{sensitivity)/specificity} $$
 
 A likelihood ratio greater than 1 speaks in favour of the condition being tested for, while a likelihood ratio less than 1 speaks against the condition. As a rule of thumb, a positive likelihood ratio (LR+) greater than 10 is considered strong evidence that the condition is present. A negative likelihood ratio (LR-) smaller than 0.1 is considered strong evidence against the condition \citep{deeks2004}. For example, if LR+ = 10 and LR- = 0.1 then a positive test means that it is 10 times *more* likely that the condition is present than not present, and a negative test means that it is 10 times *less* likely that the condition is present than not present. Thus, likelihood ratios come in pairs and are combined measures of the usefulness of a diagnostic test. Specifically, for our purpose, runs charts are diagnostic test for non-random variation in time series data \citep{anhoej2015, anhoej2018}.
 
-### Best box and cut box adjustments to improve the Anhøj rules
+## Best box and cut box adjustments to improve the Anhøj rules
 
 To fix some terms, we define a box as a square region $C \geq c, L \leq l$. These are the square regions that may be used to define random variation. The corner of the box is its upper right square $C = c, L = l$. In Figure \ref{figure:box11} the box $C \geq 2, L \leq 6$, marked with red, specifies the Anhøj rules for $N=11$. The corner of this box is the square $C = 2, L = 6$.
 
@@ -98,7 +98,7 @@ In this study we used a target specificity of 92.5%, which is close to the actua
 
 Figure \ref{figure:box11} illustrates these principles for a run chart with 11 data points. Thus, for N = 11, the Anhøj rules would signal a shift if C < 2 or L > 6; best box would signal if C < 3 or L > 7; and cut box would signal if C < 3 or L > 7, and also when C = 3 and L = 7.
 
-## Results
+# Results
 
 We calculated the limits for the Anhøj, best box, and cut box rules together with their corresponding positive test proportions and log-likelihood ratios for N = 10-100 and SD = 0-3 (in 0.2 SD increments). We stored the \code{log} of likelihood ratios to preserve numerical precision. To get the actual likelihood values back, use \code{exp(log-likelihood)}. The limits, specificities, and sensitivities are presented in Table \ref{tab:tab1}. The R code to reproduce the full results set and the figures from this article is provided in the supplementary file \file{crossrunbox.R}.
 
@@ -147,7 +147,7 @@ Figures \ref{figure:lrpos} and \ref{figure:lrneg} compare the positive and negat
   \label{figure:lrneg}
 \end{figure}
 
-## Discussion and conclusion
+# Discussion and conclusion
 
 This study provided exact values for the diagnostic properties of the Anhøj rules for run charts with 10-100 data points including shifts up to 3 standard deviation units.
 
@@ -171,7 +171,8 @@ In conclusion, this study provided exact values for the diagnostic properties of
 
 \newpage
 
-## Appendix: Results table
+# Results table
+\footnotesize
 
 ```{r, echo=FALSE}
 library(knitr)
@@ -214,3 +215,5 @@ kable(b,
                      'Sensitivity, shift = 0.8 SD' = 3)) %>%
   kable_styling(latex_options = 'repeat_header')
 ```
+
+\normalsize
