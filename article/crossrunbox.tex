@@ -81,9 +81,9 @@ percentile of the corresponding cumulative binomial distribution
 distribution of longest runs. Consequently, the upper prediction limit
 for longest runs has traditionally been either a fixed value (usually 7
 or 8) \citep{carey2002a} or an approximate value depending on n as with
-the Anhøj rules: \(log_2(n) + 3\) rounded to the nearest integer
+the Anhøj rules: \(\log_2(n) + 3\) rounded to the nearest integer
 \citep{schilling2012}. Figure \ref{figure:run} has 20 data points, the
-curve crosses the centre line 9 times, and the longest run (points 3-5)
+curve crosses the centre line 9 times, and the longest run (points 3-6)
 contains 4 data points. In a random process with 20 data points, we
 should expect at least 6 crossings and the longest run should include no
 more than 7 data points. Thus, according to the Anhøj rules, Figure
@@ -232,7 +232,7 @@ C \textless{} 3 or L \textgreater{} 7; and cut box would signal if C
 We calculated the limits for the Anhøj, best box, and cut box rules
 together with their corresponding positive test proportions and
 log-likelihood ratios for N = 10-100 and SD = 0-3 (in 0.2 SD
-increments). We stored the log of likelihood ratios to preserve
+increments). We stored the \code{log} of likelihood ratios to preserve
 numerical precision. To get the actual likelihood values back, use
 \code{exp(log-likelihood)}. The limits, specificities, and sensitivities
 are presented in Table \ref{tab:tab1}. The R code to reproduce the full
