@@ -1,0 +1,81 @@
+\begin{thebibliography}{10}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Anhøj(2015)]{anhoej2015}
+J.~Anhøj.
+\newblock Diagnostic value of run chart analysis: Using likelihood ratios to
+  compare run chart rules on simulated data series.
+\newblock \emph{PLoS ONE}, 2015.
+\newblock \doi{10.1371/journal.pone.0121349}.
+\newblock URL
+  \url{http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0121349}.
+
+\bibitem[Anhøj(2019)]{qicharts2}
+J.~Anhøj.
+\newblock \emph{{q}icharts2: Quality Improvement Charts}, 2019.
+\newblock URL \url{https://CRAN.R-project.org/package=qicharts2}.
+\newblock R package version 0.6.0.
+
+\bibitem[Anhøj and Olesen(2014)]{anhoej2014}
+J.~Anhøj and A.~V. Olesen.
+\newblock Run charts revisited: A simulation study of run chart rules for
+  detection of non-random variation in health care processes.
+\newblock \emph{PLoS ONE}, 2014.
+\newblock \doi{10.1371/journal.pone.0113825}.
+\newblock URL
+  \url{https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0113825}.
+
+\bibitem[Anhøj and Wentzel-Larsen(2018)]{anhoej2018}
+J.~Anhøj and T.~Wentzel-Larsen.
+\newblock Sense and sensibility: on the diagnostic value of control chart rules
+  for detection of shifts in time series data.
+\newblock \emph{BMC Medical Research Methodology}, 18\penalty0 (1):\penalty0
+  100, 2018.
+\newblock \doi{10.1186/s12874-018-0564-0}.
+\newblock URL \url{https://doi.org/10.1186/s12874-018-0564-0}.
+
+\bibitem[Carey(2002)]{carey2002a}
+R.~G. Carey.
+\newblock How do you know that your care is improving? part 1: Basic concepts
+  in statistical thinking.
+\newblock \emph{J Ambulatory Care Manage}, 25(1):\penalty0 80--87, 2002.
+
+\bibitem[Chen(2010)]{chen2010}
+Z.~Chen.
+\newblock A note on the runs test.
+\newblock \emph{Model Assisted Statistics and Applications}, 5:\penalty0
+  73--77, 2010.
+\newblock \doi{10.3233/MAS-2010-0142}.
+
+\bibitem[Deeks and Altman(2004)]{deeks2004}
+J.~J. Deeks and D.~G. Altman.
+\newblock Diagnostic tests 4: likelihood ratios.
+\newblock \emph{BMJ}, 329:\penalty0 168--169, 2004.
+\newblock \doi{10.1136/bmj.329.7458.168}.
+\newblock URL \url{https://www.bmj.com/content/329/7458/168}.
+
+\bibitem[Maechler(2019)]{rmpfr}
+M.~Maechler.
+\newblock \emph{Rmpfr: R MPFR - Multiple Precision Floating-Point Reliable},
+  2019.
+\newblock URL \url{https://CRAN.R-project.org/package=Rmpfr}.
+\newblock R package version 0.7-2.
+
+\bibitem[Schilling(2012)]{schilling2012}
+M.~F. Schilling.
+\newblock The surprising predictability of long runs.
+\newblock \emph{Mathematics Magazine}, 85:\penalty0 141--149, 2012.
+\newblock \doi{10.4169/math.mag.85.2.141}.
+
+\bibitem[Wentzel-Larsen and Anhøj(2018)]{twl2018}
+T.~Wentzel-Larsen and J.~Anhøj.
+\newblock \emph{crossrun: Joint Distribution of Number of Crossings and Longest
+  Run}, 2018.
+\newblock URL \url{https://CRAN.R-project.org/package=crossrun}.
+\newblock R package version 0.1.0.
+
+\end{thebibliography}

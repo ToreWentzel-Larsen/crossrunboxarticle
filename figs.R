@@ -47,11 +47,22 @@ ggplot(filter(vals, shift == 0), aes(n, p, colour = rule)) +
   geom_line(size = 1) +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
   theme_minimal() +
-  labs(title = 'Specificity',
+  labs(title = 'Specificity (no shif)',
        y = 'Probability of true negative',
        x = 'N')
 if(save.plots)
   ggsave('figures/fig_spec.pdf', height = 4, width = 8)
+
+## Sensitivity
+ggplot(filter(vals, shift == 0.8), aes(n, 1 - p, colour = rule)) +
+  geom_line(size = 1) +
+  scale_x_continuous(breaks = seq(20, 100, by = 20)) +
+  theme_minimal() +
+  labs(title = 'Sensitivity (shift = 0.8 SD)',
+       y = 'Probability of true positive',
+       x = 'N')
+if(save.plots)
+  ggsave('figures/fig_sens.pdf', height = 4, width = 8)
 
 # Plot likelihood ratios ----
 ## LR+

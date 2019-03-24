@@ -67,20 +67,27 @@ two simple tests \citep{anhoej2014, anhoej2015, anhoej2018}:
 
 Collectively, we refer to these tests as the Anhøj rules, which are the
 default rules used for run and control chart analysis with the
-\CRANpkg{qicharts2} package \citep{qicharts2}. Critical values for run
-length and number of crossings depend on the total number of data points
-in the chart. The number of crossings follow a binomial distribution,
-\(b(n - 1, 0.5)\), where n is the number of data points and 0.5 the
-success probability. Thus, the lower prediction limit for number of
-crossings may, for example, be set to the lower 5th percentile of the
-corresponding cumulative binomial distribution \citep{chen2010}.
-However, no closed form expression exists for the distribution of
-longest runs. Consequently, the upper prediction limit for longest runs
-has traditionally been either a fixed value (usually 7 or 8)
-\citep{carey2002a} or an approximate value depending on n as with the
-Anhøj rules: \(log_2(n) + 3\) rounded to the nearest integer
-\citep{schilling2012}. Figure \ref{figure:run} shows random variation
-according to the Anhøj rules.
+\CRANpkg{qicharts2} package \citep{qicharts2}. For a thorough discussion
+of the practical use of run and control charts for quality improvement
+we refer to the \CRANpkg{qicharts2} package vignette.
+
+Critical values for run length and number of crossings depend on the
+total number of data points in the chart. The number of crossings follow
+a binomial distribution, \(b(n - 1, 0.5)\), where n is the number of
+data points and 0.5 the success probability. Thus, the lower prediction
+limit for number of crossings may, for example, be set to the lower 5th
+percentile of the corresponding cumulative binomial distribution
+\citep{chen2010}. However, no closed form expression exists for the
+distribution of longest runs. Consequently, the upper prediction limit
+for longest runs has traditionally been either a fixed value (usually 7
+or 8) \citep{carey2002a} or an approximate value depending on n as with
+the Anhøj rules: \(log_2(n) + 3\) rounded to the nearest integer
+\citep{schilling2012}. Figure \ref{figure:run} has 20 data points, the
+curve crosses the centre line 9 times, and the longest run (points 3-5)
+contains 4 data points. In a random process with 20 data points, we
+should expect at least 6 crossings and the longest run should include no
+more than 7 data points. Thus, according to the Anhøj rules, Figure
+\ref{figure:run} shows random variation.
 
 Each of the two tests has an overall specificity (true negative
 proportion) around 95\%. The sensitivity (true positive proportion) of a
@@ -96,10 +103,10 @@ fluctuates around 92.5\% (see red line in Figure \ref{figure:spec}).
   \label{figure:spec}
 \end{figure}
 
-Historically, runs tests have mainly been studied in isolation as
-individual tests. But what is really of interest, because the rules are
-linked -- when one goes up, the other goes down -- is the properties of
-the joint distribution of number of crossings (C) and longest runs (L).
+Historically, runs tests have mainly been studied individually. But what
+is really of interest, because the rules are linked -- when one goes up,
+the other goes down -- is the properties of the joint distribution of
+number of crossings (C) and longest runs (L).
 
 We recently released an R package, \CRANpkg{crossrun} \citep{twl2018},
 that includes functions for calculating the joint probabilities of C and
@@ -174,9 +181,15 @@ being tested for, while a likelihood ratio less than 1 speaks against
 the condition. As a rule of thumb, a positive likelihood ratio (LR+)
 greater than 10 is considered strong evidence that the condition is
 present. A negative likelihood ratio (LR-) smaller than 0.1 is
-considered strong evidence against the condition \citep{deeks2004}.
-Thus, likelihood ratios are useful measures of the diagnostic value of
-run charts \citep{anhoej2015, anhoej2018}.
+considered strong evidence against the condition \citep{deeks2004}. For
+example, if LR+ = 10 and LR- = 0.1 then a positive test means that it is
+10 times \emph{more} likely that the condition is present than not
+present, and a negative test means that it is 10 times \emph{less}
+likely that the condition is present than not present. Thus, likelihood
+ratios come in pairs and are combined measures of the usefulness of a
+diagnostic test. Specifically, for our purpose, runs charts are
+diagnostic test for non-random variation in time series data
+\citep{anhoej2015, anhoej2018}.
 
 \hypertarget{best-box-and-cut-box-adjustments-to-improve-the-anhj-rules}{%
 \subsubsection{Best box and cut box adjustments to improve the Anhøj
@@ -197,11 +210,11 @@ finds the box with highest sensitivity for a pre-determined shift (the
 target shift), among boxes with specificity \(\geq\) a pre-determined
 value (the target specificity). The \code{cutbox()} function
 subsequently cuts squares from the upper and right borders of the best
-box, starting from the upper right corner while keeping specificity
-\(\geq\) its target value, and the sensitivity for the target shift as
-large as possible. The result of \code{cutbox()} is not necessarily a
-box, but a reasonable region for declaring random variation with one or
-a few squares close to the corner possibly removed.
+box, starting from the corner while keeping specificity \(\geq\) its
+target value, and the sensitivity for the target shift as large as
+possible. The result of \code{cutbox()} is not necessarily a box, but a
+reasonable region for declaring random variation with one or a few
+squares close to the corner possibly removed.
 
 In this study we used a target specificity of 92.5\%, which is close to
 the actual average specificity for the Anhøj rules for N = 10-100, while
@@ -237,7 +250,11 @@ function of N and SD. The upper left facet (SD = 0) contains the same
 data as Figure \ref{figure:spec}. As expected and shown previously in
 our simulation studies, the power of the runs analysis increases with
 increasing N and SD. The smoothing effect of best box and cut box
-appears to wear off as N and SD increases.
+appears to wear off as N and SD increases. Figure \ref{figure:sens} is a
+blown up version of the facet with shift = 0.8 SD from Figure
+\ref{figure:pwr} and shows the sensitivity for the target value used in
+the box calculations. Exact values for shift = 0 and shift = 0.8 may be
+looked up in Table \ref{tab:tab1}
 
 \begin{figure}[htbp]
   \centering
@@ -247,6 +264,15 @@ appears to wear off as N and SD increases.
            Numbers above each facet represent the size of the shift in standard
            deviation units (SD) that is present in data.}
   \label{figure:pwr}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig_sens.pdf}
+  \caption{Sensitivity of Anhøj, best box, and cut box rules for shift = 0.8
+           standard deviation units.
+           N = number of data points in run chart.}
+  \label{figure:sens}
 \end{figure}
 
 Figures \ref{figure:lrpos} and \ref{figure:lrneg} compare the positive
@@ -286,12 +312,12 @@ package, the properties of the joint distribution of number of crossings
 and longest runs in random data series have not been studied before.
 
 Furthermore, the study demonstrated that it is feasible to reduce the
-variability in run chart specificity from varying number of data points
+variability in run chart specificity with varying number of data points
 by using the best box and cut box adjustments of the Anhøj rules.
 
 Most importantly, figures \ref{figure:lrpos} and \ref{figure:lrneg}
 confirm what we expected after years of practical experience using runs
-analysis, that the Anhøj rules are a useful and robust method for
+analysis, that the Anhøj rules is a useful and robust method for
 detection of persistent shifts only slightly larger than 1 standard
 deviation units and with as little as 10-12 data points. This can be
 seen by the fact that LR+ \textgreater{} 10 for SD \textgreater{} 1 and
@@ -332,23 +358,26 @@ encourage users to adapt our findings to their own needs.
 
 Regarding the practical application of the box adjustment of the Anhøj
 rules, we are in the process of testing a \code{method} argument for the
-\code{qic()} function in the \CRANpkg{qicharts2} package allowing the
-user to choose between \code{"anhoej"}, \code{"bestbox"}, and
+\code{qic()} function from the \CRANpkg{qicharts2} package that allows
+the user to choose between \code{"anhoej"}, \code{"bestbox"}, and
 \code{"cutbox"} methods to identify non-random variation in run and
 control charts with up to 100 data points. This will allow us and others
-to quickly gain practical experience with the box adjustments on real
-life data.
+to quickly gain practical experience with box adjustments on real life
+data.
 
 In conclusion, this study provided exact values for the diagnostic
 properties of the Anhøj rules for run charts with 10-100 data points
 including shifts up to 3 standard deviation units, and demonstrated that
 it is feasible to reduce the variability in run chart specificity from
-varying number of data points by using the best box and cut box
+varying numbers of data points by using the best box and cut box
 adjustments of the Anhøj rules.
 
 \bibliography{RJreferences}
 
 \newpage
+
+\hypertarget{appendix-results-table}{%
+\subsection{Appendix: Results table}\label{appendix-results-table}}
 
 \begin{Schunk}
 
