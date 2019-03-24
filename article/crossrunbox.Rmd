@@ -170,6 +170,9 @@ b <- readRDS('../data/cr100_bounds.rds')
 b <- b[, c('n', 'ca', 'la', 'cb', 'lb', 'cbord', 'lbord', 
            'pa_0.0', 'pb_0.0', 'pc_0.0',
            'pa_0.8', 'pb_0.8', 'pc_0.8')]
+b$pa_0.8 <- 1 - b$pa_0.8
+b$pb_0.8 <- 1 - b$pb_0.8
+b$pc_0.8 <- 1 - b$pc_0.8
 names(b) <- c('N', 'C', 'L', 'C', 'L', 'Cbord', 'Lbord', 
               'Anhøj', 'Best box', 'Cut box',
               'Anhøj', 'Best box', 'Cut box')
