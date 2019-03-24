@@ -98,7 +98,7 @@ In this study we used a target specificity of 92.5%, which is close to the actua
 
 Figure \ref{figure:box11} illustrates these principles for a run chart with 11 data points. Thus, for N = 11, the Anhøj rules would signal a shift if C < 2 or L > 6; best box would signal if C < 3 or L > 7; and cut box would signal if C < 3 or L > 7, and also when C = 3 and L = 7.
 
-The following notation is introduced to describe the cut box rules. In the right hand vertical border of the best box (L=l) the part retained within the cut box is stated as $C\geq \text{Cbord}$. Similarly in the top horizontal border of the best box (C=c) the part retained within the cut box is stated as $L \leq \text{Lbord}$. For N=11 (Figure \ref{figure:box11}) Cbord=4 and Lbord=6, this is a case in which only the corner is cut. If no cut is done, Cbord and Lbord are not specified, these are the cases inwhich the cut box is identical with the best box.
+The following notation is introduced to describe the cut box rules. In the right hand vertical border of the best box (L=l) the part retained within the cut box is stated as $C\geq \text{Cbord}$. Similarly in the top horizontal border of the best box (C=c) the part retained within the cut box is stated as $L \leq \text{Lbord}$. For N=11 (Figure \ref{figure:box11}) Cbord=4 and Lbord=6, this is a case in which only the corner is cut. If no cut is done, Cbord and Lbord are not specified, these are the cases in which the cut box is identical with the best box.
 
 # Results
 
