@@ -26,7 +26,7 @@
 # produce output for N = 10-40 and SD = 0-2. To reproduce all data from the
 # article, change the parameters nmax and smax to 100 and 3 respectively.
 # 
-# Jacob Anhøj & Tore Wentzel-Larsen 22 Mar 2019
+# Jacob Anhøj & Tore Wentzel-Larsen 24 Mar 2019
 ################################################################################
 
 # Load libraries ----
@@ -458,6 +458,15 @@ ggplot(filter(cr_bounds_tall, shift == 0), aes(n, p, colour = rule)) +
   theme_minimal() +
   labs(title = 'Specificity',
        y = 'Probability of true negative',
+       x = 'N')
+
+## Plot sensitivity for shift = 0.8 SD
+ggplot(filter(cr_bounds_tall, shift == 0.8), aes(n, 1 - p, colour = rule)) +
+  geom_line(size = 1) +
+  scale_x_continuous(breaks = seq(20, 100, by = 20)) +
+  theme_minimal() +
+  labs(title = 'Sensitivity (shift = 0.8 SD)',
+       y = 'Probability of true positive',
        x = 'N')
 
 ## Plot LR+
