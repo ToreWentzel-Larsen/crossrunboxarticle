@@ -6,7 +6,7 @@ Statistical Process Control}
 \maketitle
 
 \abstract{%
-The run charts is one form of statistical process control charts that is
+The run charts is one form of statistical process control chart that is
 particularly useful for detecting minor to moderate shifts in data over
 time. The Anhøj rules test for shifts by looking for unusually long runs
 (L) of data points on the same side of the process centre (mean or
@@ -39,7 +39,7 @@ random process, the data points will be randomly distributed around the
 median, and the number and lengths of runs will be predictable within
 limits. All things being equal, if the process shifts, runs tend to
 become longer and fewer. Consequently, runs analysis may help detect
-shifts in process location. Process shifts are one form of non-random
+shifts in process location. Process shifts are a kind of non-random
 variation in time series data that are of particular interest to quality
 control and improvement: If a process shifts, it may be the result of
 planned improvement or unwanted deterioration.
@@ -73,15 +73,15 @@ we refer to the \CRANpkg{qicharts2} package vignette.
 
 Critical values for run length and number of crossings depend on the
 total number of data points in the chart. The number of crossings follow
-a binomial distribution, \(b(n - 1, 0.5)\), where n is the number of
+a binomial distribution, \(b(N - 1, 0.5)\), where N is the number of
 data points and 0.5 the success probability. Thus, the lower prediction
 limit for number of crossings may, for example, be set to the lower 5th
 percentile of the corresponding cumulative binomial distribution
 \citep{chen2010}. However, no closed form expression exists for the
 distribution of longest runs. Consequently, the upper prediction limit
 for longest runs has traditionally been either a fixed value (usually 7
-or 8) \citep{carey2002a} or an approximate value depending on n as with
-the Anhøj rules: \(\log_2(n) + 3\) rounded to the nearest integer
+or 8) \citep{carey2002a} or an approximate value depending on N as with
+the Anhøj rules: \(\log_2(N) + 3\) rounded to the nearest integer
 \citep{schilling2012}. Figure \ref{figure:run} has 20 data points, the
 curve crosses the centre line 9 times, and the longest run (points 3-6)
 contains 4 data points. In a random process with 20 data points, we
@@ -115,7 +115,7 @@ shifts in process location expressed in standard deviation units (SD).
 Figure \ref{figure:box11} illustrates this for a run chart with N = 11
 and SD = 0 (no shift). To avoid very small numbers, the probabilities
 are shown using the times representation, that is, the probabilities
-times \(2^{n-1}\), which is 1024 for N = 11. The red box encloses the
+times \(2^{N-1}\), which is 1024 for N = 11. The red box encloses the
 combinations of C and L that would indicate random variation according
 to the Anhøj rules (true negatives). The area outside the box represents
 combinations of C and L that would indicate non-random variation (false
@@ -126,8 +126,8 @@ positives).
   \includegraphics[width=\textwidth]{fig_box11.pdf}
   \caption{Borders of the Anhøj, best box, and cut box rules for N = 11 data points. 
            C = number of crossings, L = longest run.
-           The numbers in the cells are times representation of of the joint
-           probabilities of longest run and number of crossings.
+           The numbers in the cells are times representation of the joint
+           probabilities of C and L.
            Anhøj = red solid, best box = green dashed, cut box = blue dot-dashed.}
   \label{figure:box11}
 \end{figure}
@@ -159,8 +159,8 @@ for improving the value of runs analysis.
 \subsection{Likelihood ratios to quantify the diagnostic value of runs
 rules}\label{likelihood-ratios-to-quantify-the-diagnostic-value-of-runs-rules}}
 
-The value of a diagnostic test is traditionally described using terms
-like sensitivity and specificity. These parameters express the
+The value of diagnostic tests has traditionally been described using
+terms like sensitivity and specificity. These parameters express the
 probability of detecting the condition being tested for when it is
 present and not detecting it when it is absent:
 
@@ -169,8 +169,7 @@ present and not detecting it when it is absent:
 
 However, we usually seek to answer the opposite question: what is the
 likelihood that a positive or negative test actually represents the
-condition being tested for, which in our case is a shift in the
-underlying process? Likelihood ratios (LR) do this:
+condition being tested for? Likelihood ratios (LR) do this:
 
 \[ \text{LR+ = TP/FP = sensitivity/(1} - \text{specificity)} \]
 \[ \text{LR- = FN/TN = (1} - \text{sensitivity)/specificity} \]
@@ -187,7 +186,7 @@ present, and a negative test means that it is 10 times \emph{less}
 likely that the condition is present than not present. Thus, likelihood
 ratios come in pairs and are combined measures of the usefulness of a
 diagnostic test. Specifically, for our purpose, runs charts are
-diagnostic test for non-random variation in time series data
+diagnostic tests for non-random variation in time series data
 \citep{anhoej2015, anhoej2018}.
 
 \hypertarget{best-box-and-cut-box-adjustments-to-improve-the-anhj-rules}{%
@@ -195,8 +194,8 @@ diagnostic test for non-random variation in time series data
 rules}\label{best-box-and-cut-box-adjustments-to-improve-the-anhj-rules}}
 
 To fix some terms, we define a box as a square region
-\(C \geq c, L \leq l\). These are the square regions that may be used to
-define random variation. The corner of the box is its upper right square
+\(C \geq c, L \leq l\). These are the squares that may be used to define
+random variation. The corner of the box is its upper right square
 \(C = c, L = l\). In Figure \ref{figure:box11} the box
 \(C \geq 2, L \leq 6\), marked with red, specifies the Anhøj rules for
 \(N=11\). The corner of this box is the square \(C = 2, L = 6\).
@@ -208,31 +207,43 @@ specificity requirements. Specifically, the \code{bestbox()} function
 finds the box with highest sensitivity for a pre-determined shift (the
 target shift), among boxes with specificity \(\geq\) a pre-determined
 value (the target specificity). The \code{cutbox()} function
-subsequently cuts squares from the upper and right borders of the best
-box, starting from the corner while keeping specificity \(\geq\) its
-target value, and the sensitivity for the target shift as large as
-possible. The result of \code{cutbox()} is not necessarily a box, but a
-reasonable region for declaring random variation with one or a few
-squares close to the corner possibly removed.
+subsequently cuts squares from the topmost horisontal and rightmost
+vertical borders of the best box, starting from the corner while keeping
+specificity \(\geq\) its target value, and the sensitivity for the
+target shift as large as possible. The result of \code{cutbox()} is not
+necessarily a box, but still a reasonable region for declaring random
+variation where the corner itself, possibly together with one or more of
+its neighbours downwards or to the left, may be removed from the best
+box.
 
 In this study we used a target specificity of 92.5\%, which is close to
 the actual average specificity for the Anhøj rules for N = 10-100, while
 the target shift was set at 0.8.
 
 Figure \ref{figure:box11} illustrates these principles for a run chart
-with 11 data points. Thus, for N = 11, the Anhøj rules would signal a
-shift if C \textless{} 2 or L \textgreater{} 6; best box would signal if
-C \textless{} 3 or L \textgreater{} 7; and cut box would signal if C
-\textless{} 3 or L \textgreater{} 7, and also when C = 3 and L = 7.
+with 11 data points. Thus, for \(N = 11\), the Anhøj rules would signal
+a shift if \(C < 2\) or \(L > 6\); best box would signal if \(C < 3\) or
+\(L > 7\); and cut box would signal if \(C < 3\) or \(L > 7\), and also
+when \(C = 3\) and \(L = 7\).
+
+The following notation is introduced to describe the cut box rules
+(Table \ref{tab:tab1}): In the rightmost vertical border of the best box
+(\(L = l\)) the part retained within the cut box is stated as
+\(C\geq \text{Cbord}\). Similarly, in the topmost horizontal border of
+the best box (\(C = c\)) the part retained within the cut box is stated
+as \(L \leq \text{Lbord}\). For \(N = 11\), Cbord = 4 and Lbord = 6
+(Figure \ref{figure:box11} and Table \ref{tab:tab1}), in which case only
+the corner is cut. If no cut is done, Cbord and Lbord are not specified,
+these are the cases in which the cut box is identical to the best box.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
 We calculated the limits for the Anhøj, best box, and cut box rules
 together with their corresponding positive test proportions and
-log-likelihood ratios for N = 10-100 and SD = 0-3 (in 0.2 SD
-increments). We stored the \code{log} of likelihood ratios to preserve
-numerical precision. To get the actual likelihood values back, use
+likelihood ratios for N = 10-100 and SD = 0-3 (in 0.2 SD increments). We
+stored the \code{log} of likelihood ratios to preserve numerical
+precision. To get the actual likelihood values back, use
 \code{exp(log-likelihood)}. The limits, specificities, and sensitivities
 are presented in Table \ref{tab:tab1}. The R code to reproduce the full
 results set and the figures from this article is provided in the
@@ -252,8 +263,8 @@ increasing N and SD. The smoothing effect of best box and cut box
 appears to wear off as N and SD increases. Figure \ref{figure:sens} is a
 blown up version of the facet with shift = 0.8 SD from Figure
 \ref{figure:pwr} and shows the sensitivity for the target value used in
-the box calculations. Exact values for shift = 0 and shift = 0.8 may be
-looked up in Table \ref{tab:tab1}
+the box calculations. Exact values for shift = 0 and shift = 0.8 are
+presented in Table \ref{tab:tab1}
 
 \begin{figure}[htbp]
   \centering
@@ -316,7 +327,7 @@ by using the best box and cut box adjustments of the Anhøj rules.
 
 Most importantly, figures \ref{figure:lrpos} and \ref{figure:lrneg}
 confirm what we expected after years of practical experience using runs
-analysis, that the Anhøj rules is a useful and robust method for
+analysis, that the Anhøj rules constitute a useful and robust method for
 detection of persistent shifts only slightly larger than 1 standard
 deviation units and with as little as 10-12 data points. This can be
 seen by the fact that LR+ \textgreater{} 10 for SD \textgreater{} 1 and
@@ -378,7 +389,7 @@ adjustments of the Anhøj rules.
 \hypertarget{results-table}{%
 \section{Results table}\label{results-table}}
 
-\footnotesize
+\scriptsize
 
 \begin{Schunk}
 
