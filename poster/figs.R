@@ -146,7 +146,7 @@ f3 <- qic(nr, Result,
           show.labels = F,
           part.labels = c('Pre-change (lot 1)', 'Post-change (lot 2)'),
           title = NULL,
-          subtitle = 'Figure 3: Creatinine in control materials',
+          subtitle = 'Figure 3: Creatinine in one control material',
           ylab = expression(paste(mu, 'mol / L')),
           xlab = 'Sequence # pre and post lot change')
 x3 <- summary(f3)[c('n.useful',
