@@ -36,6 +36,10 @@ We calculated exact values for the joint distribution of C and L for N = 10-100 
 **Conclusions**
 This study provides exact values for the joint distribution of longest run and number of crossings in random data series and demonstrates that it is possible to obtain better diagnostic properties of run charts by making minor adjustment to the critical values for C and L.
 
+# Keywords
+
+statistical process control, run charts, control charts, runs analysis, quality improvement
+
 # Background
 
 Within statistical process control (SPC) runs analysis is being used to detect persistent shifts in process location over time [@anhoej2018].
@@ -138,6 +142,20 @@ Regarding the practical application of the box adjustment of the Anhøj rules, w
 
 In conclusion, this study provided exact values for the diagnostic properties of the Anhøj rules for run charts with 10-100 data points including shifts up to 3 standard deviation units, and demonstrated that it is feasible to reduce the variability in run chart specificity from varying numbers of data points by using the best box and cut box adjustments of the Anhøj rules.
 
+# List of abbreviations
+
+* SPC: statistical process control
+* C: Number of times the curve crosses the median line
+* L: Length of longest runs
+* N: Number of data points
+* SD: Standard deviation
+* TP: True positive proportion
+* FP: False positive proportion
+* TN: True negative proportion
+* FN: False negative proportion
+* LR+: Positive likelihood ratio
+* LR-: Negative likelihood ratio
+
 # Results table
 
 Table 1: Signal limits, specificity, and sensitivity for the Anhøj and best box rules and borders for the cut box rules. N = number of data points in chart. C = lower limit for number of crossings, L = upper limit for longest run,  for declaring random variation by the Anhøj and best box rules. Cbord and Lbord = Additional information for the cut box rules. When specified, parts of the border of the best box to retain to declare random variation. When not specified, cut box is identical to best box.
@@ -191,4 +209,41 @@ tbl <- align(tbl, align = 'center', part = 'header')
 autofit(tbl, add_w = 0)
 ```
 
+# Declarations
+
+## Ethics approval and consent to participate
+
+Not applicable.
+  
+## Consent for publication
+
+Not applicable.
+
+## Availability of data and material
+
+The R source code of the simulation programme is available as Additional file 1.
+
+## Competing interests
+
+The authors declare that they have no competing interests.
+
+## Funding
+
+This study received no funding
+
+## Authors' contributions
+
+JA and TWL 
+
+* contributed to conception, design, acquisition of data, and analysis and interpretation of data;
+
+* was involved in writing and revising the manuscript;
+
+* gave final approval of the version to be published;
+
+* agreed to be accountable for all aspects of the work.
+
+## Acknowledgements
+
+Not applicable.
 # References
