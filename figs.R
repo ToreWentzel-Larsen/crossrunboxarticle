@@ -2,7 +2,7 @@
 library(tidyverse)
 library(qicharts2)
 
-save.plots <- F
+save.plots <- T
 
 x <- read_rds('data/cr100_sym.rds')
 b <- read_rds('data/cr100_bounds.rds')
@@ -24,11 +24,11 @@ vals <- b %>%
 # Run chart ----
 set.seed(4)
 qic(rnorm(20, 3),
-    title = 'Run chart',
+    title = NULL, #'Run chart',
     ylab = 'Indicator value',
     xlab = 'Time/order')
 if(save.plots)
-  ggsave('figures/fig_run.pdf', height = 4, width = 8)
+  ggsave('figures/fig1_run.pdf', height = 4, width = 8)
 
 # Plot power function ----
 ggplot(vals, aes(n, 1 - p, colour = rule)) +
@@ -36,33 +36,33 @@ ggplot(vals, aes(n, 1 - p, colour = rule)) +
   facet_wrap(~ shift, ncol = 4) +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
   theme_minimal() +
-  labs(title = 'Power function',
+  labs(title = NULL, #'Power function',
        y = 'Probability of signal',
        x = 'N')
 if(save.plots)
-  ggsave('figures/fig_pwr.pdf', height = 6, width = 8)
+  ggsave('figures/fig4_pwr.pdf', height = 6, width = 8)
 
 ## Specificity
 ggplot(filter(vals, shift == 0), aes(n, p, colour = rule)) +
   geom_line(size = 1) +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
   theme_minimal() +
-  labs(title = 'Specificity (no shif)',
+  labs(title = NULL, #'Specificity (no shif)',
        y = 'Probability of true negative',
        x = 'N')
 if(save.plots)
-  ggsave('figures/fig_spec.pdf', height = 4, width = 8)
+  ggsave('figures/fig2_spec.pdf', height = 4, width = 8)
 
 ## Sensitivity
 ggplot(filter(vals, shift == 0.8), aes(n, 1 - p, colour = rule)) +
   geom_line(size = 1) +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
   theme_minimal() +
-  labs(title = 'Sensitivity (shift = 0.8 SD)',
+  labs(title = NULL, #'Sensitivity (shift = 0.8 SD)',
        y = 'Probability of true positive',
        x = 'N')
 if(save.plots)
-  ggsave('figures/fig_sens.pdf', height = 4, width = 8)
+  ggsave('figures/fig5_sens.pdf', height = 4, width = 8)
 
 # Plot likelihood ratios ----
 ## LR+
@@ -74,11 +74,11 @@ ggplot(filter(vals, !is.na(loglrpos)),
   scale_y_log10() +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
   theme_minimal() +
-  labs(title = 'Positive likelihood ratios',
+  labs(title = NULL, #'Positive likelihood ratios',
        y = 'LR+',
        x = 'N')
 if(save.plots)
-  ggsave('figures/fig_lrpos.pdf', height = 5, width = 8)
+  ggsave('figures/fig6_lrpos.pdf', height = 5, width = 8)
 
 ## LR-
 ggplot(filter(vals, !is.na(loglrpos)),
@@ -89,11 +89,11 @@ ggplot(filter(vals, !is.na(loglrpos)),
   scale_y_log10() +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
   theme_minimal() +
-  labs(title = 'Negative likelihood ratios',
+  labs(title = NULL, #'Negative likelihood ratios',
        y = 'LR-',
        x = 'N')
 if(save.plots)
-  ggsave('figures/fig_lrneg.pdf', height = 5, width = 8)
+  ggsave('figures/fig7_lrneg.pdf', height = 5, width = 8)
 
 # Function to plot LC box figures ----
 crplot <- function(n = 11, labels = T) {
@@ -184,7 +184,7 @@ crplot <- function(n = 11, labels = T) {
 
 crplot(11, labels = T)
 if(save.plots)
-  ggsave('figures/fig_box11.pdf', height = 8, width = 8)
+  ggsave('figures/fig3_box11.pdf', height = 8, width = 8)
 
 # crplot(10, labels = T)
 # crplot(11, labels = T)
