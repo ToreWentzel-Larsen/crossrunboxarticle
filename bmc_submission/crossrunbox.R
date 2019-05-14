@@ -2,25 +2,26 @@
 # This script reproduces the data objects and figures from the Smooth Operator
 # article by Jacob Anhøj and Tore Wentzel-Larsen, 2019.
 #
-# The objects of interest are cr_dists and cr_bounds.
+# The objects of primary interest are cr_dists and cr_bounds.
 #
 # cr_dists: a list with probabilities for the joint distribution of number of
 # crossings (C) and longest run (L) in multiple precision (mpfr) format. To get
 # the matrix of probabilities for, say, N = 11 and no shift (SD = 0), use
 # cr_dists$pt_0.0[[11]].
 #
-# cr_bounds: a data frame with critical values for longest run and number of
-# crossings together with probabilities and log-likelihood ratios for the Anhøj,
-# best box and cut box rules.
+# cr_bounds: a data frame with critical values for C and L together with
+# probabilities and log-likelihood ratios for the Anhøj, best box and cut box
+# rules.
 # Variables:
 #   ca = lower limit for number of crossings, Anhøj rules. 
 #   la = upper limit for longest run, Anhøj rules. 
 #   cb = lower limit for number of crossings, best box rules. 
 #   lb = upper limit for longest run, best box rules. 
-#   cbord/lbord = coordinates for the cut box adjustment.
-#   pa_n.m/pb_n.m / pcbord_n.m = probality of no signal. n.m = size of the shift
-#                              in standard deviation units.
-#   loglrpos_n.m / loglrneg_n.m = positive and negative log-likehood ratios.
+#   cbord and lbord = coordinates for the cut box adjustment.
+#   pa_n.m, pb_n.m, and pc_n.m = probality of no signal for the Anhøj, best box,
+#     and cut box rules respectively. n.m = size of the shift in standard
+#     deviation units.
+#   loglrpos_n.m and loglrneg_n.m = positive and negative log-likehood ratios.
 # 
 # For the sake of speed and memory consumption the scrip is by default set to
 # produce output for N = 10-40 and SD = 0-2. To reproduce all data from the
@@ -339,7 +340,6 @@ crplot <- function(bounds, cr_dists, n = 11, labels = T) {
   lbord <- bounds$lbord[bounds$n == n]
   pc    <- bounds$pc_0.0[bounds$n == n]
   pt    <- paste0('pt', n)
-  # cr    <- crs
   
   d <- cr_dists[[pt]] %>% 
     as_tibble(rownames = NA) %>% 
