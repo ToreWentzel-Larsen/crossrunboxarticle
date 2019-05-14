@@ -80,25 +80,25 @@ The aims of this study were to  provide exact values for the diagnostic properti
 
 The value of diagnostic tests has traditionally been described using terms like sensitivity and specificity. These parameters express the probability of detecting the condition being tested for when it is present and not detecting it when it is absent:
 
-Specificity = P(no signal | no shift) = P(true negative) = 1 - P(false positive)
+Specificity = P(no signal | no shift) = P(true negative) = 1 -- P(false positive)
 
-Sensitivity = P(signal | shift) = P(true positive) = 1 - P(false negative)
+Sensitivity = P(signal | shift) = P(true positive) = 1 -- P(false negative)
 
 However, we usually seek to answer the opposite question: what is the likelihood that a positive or negative test actually represents the condition being tested for? Likelihood ratios (LR) do this:
 
-LR+ = TP/FP = sensitivity/(1 - specificity)
+LR+ = TP/FP = sensitivity/(1 -- specificity)
 
-LR- = FN/TN = (1 - sensitivity)/specificity
+LR-- = FN/TN = (1 -- sensitivity)/specificity
 
-A likelihood ratio greater than 1 speaks in favour of the condition being tested for, while a likelihood ratio less than 1 speaks against the condition. As a rule of thumb, a positive likelihood ratio (LR+) greater than 10 is considered strong evidence that the condition is present. A negative likelihood ratio (LR-) smaller than 0.1 is considered strong evidence against the condition [@deeks2004]. For example, if LR+ = 10 and LR- = 0.1 a positive test means that it is 10 times *more* likely that the condition is present than not present, and a negative test means that it is 10 times *less* likely that the condition is present than not present. Thus, likelihood ratios come in pairs and are combined measures of the usefulness of a diagnostic test. Specifically, for our purpose, runs charts are diagnostic tests for non-random variation in time series data [@anhoej2015; @anhoej2018].
+A likelihood ratio greater than 1 speaks in favour of the condition being tested for, and a likelihood ratio less than 1 speaks against the condition. As a rule of thumb, a positive likelihood ratio (LR+) greater than 10 is considered strong evidence that the condition is present, and a negative likelihood ratio (LR--) smaller than 0.1 is considered strong evidence against the condition [@deeks2004]. For example, if LR+ = 10 and LR-- = 0.1, a positive test means that it is 10 times *more* likely that the condition is present than not present, and a negative test means that it is 10 times *less* likely that the condition is present than not present. Thus, likelihood ratios come in pairs and are combined measures of the usefulness of a diagnostic test. Specifically, for our purpose, run charts are diagnostic tests for non-random variation in time series data [@anhoej2015; @anhoej2018].
 
 ## Best box and cut box adjustments to improve the Anhøj rules
 
 To fix some terms, we define a box as a rectangular region C &ge; c, L &le; l that may be used to define random variation. The corner of the box is its upper right cell C = c, L = l. In Figure 3 the box C &ge; 2, L &le; 6, marked with red, specifies the Anhøj rules for N = 11. The corner of this box is the cell C = 2, L = 6.
 
-Based on the `crossrun` package we developed two functions, `bestbox()` and `cutbox()` that automatically seek to adjust the critical values for C and L to balance between sensitivity and specificity requirements. Specifically, the `bestbox()` function finds the box with highest sensitivity for a pre-determined shift (the target shift), among boxes with specificity &ge; a pre-determined value (the target specificity). The `cutbox()` function subsequently cuts cells from the topmost horisontal and rightmost vertical borders of the best box, starting from the corner while keeping specificity &ge; its target value, and the sensitivity for the target shift as large as possible. The result of `cutbox()` is not necessarily a box, but still a reasonable region for declaring random variation where the corner itself, possibly together with one or more of its neighbours downwards or to the left, may be removed from the best box.
+Based on the `crossrun` package we developed two functions, `bestbox()` and `cutbox()` that automatically seek to adjust the critical values for C and L to balance between sensitivity and specificity requirements. Specifically, the `bestbox()` function finds the box with highest sensitivity for a pre-determined shift (the target shift), among boxes with specificity &ge; a pre-determined value (the target specificity). The `cutbox()` function subsequently cuts cells from the topmost horizontal and rightmost vertical borders of the best box, starting from the corner while keeping specificity &ge; its target value, and the sensitivity for the target shift as large as possible. The result of `cutbox()` is not necessarily a box, but still a reasonable region for declaring random variation where the corner itself, possibly together with one or more of its neighbours downwards or to the left, may be removed from the best box.
 
-In this study we used a target specificity of 92.5%, which is close to the actual average specificity for the Anhøj rules for N = 10-100, while the target shift was set at 0.8. 
+In this study we used a target specificity of 0.925, which is close to the actual average specificity for the Anhøj rules for N = 10-100 and a target shift of 0.8. 
 
 Figure 3 illustrates these principles for a run chart with 11 data points. Thus, for N = 11, the Anhøj rules would signal a shift if C < 2 or L > 6; best box would signal if C < 3 or L > 7; and cut box would signal if C < 3 or L > 7, and also when C = 3 and L = 7.
 
@@ -154,7 +154,7 @@ In conclusion, this study provided exact values for the diagnostic properties of
 * TN: True negative proportion
 * FN: False negative proportion
 * LR+: Positive likelihood ratio
-* LR-: Negative likelihood ratio
+* LR--: Negative likelihood ratio
 
 # Results table
 
