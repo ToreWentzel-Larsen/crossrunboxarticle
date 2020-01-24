@@ -2,7 +2,7 @@
 library(tidyverse)
 library(qicharts2)
 
-save.plots <- T
+save.plots <- F
 
 x <- read_rds('data/cr100_sym.rds')
 b <- read_rds('data/cr100_bounds.rds')
