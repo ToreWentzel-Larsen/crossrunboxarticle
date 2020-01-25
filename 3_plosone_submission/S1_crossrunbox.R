@@ -1,6 +1,6 @@
 # ###############################################################################
 # This script reproduces the data objects and figures from the Smooth Operator
-# article by Jacob Anhøj and Tore Wentzel-Larsen, 2019.
+# article by Jacob Anhøj and Tore Wentzel-Larsen, 2020.
 #
 # The objects of primary interest are cr_dists and cr_bounds.
 #
@@ -27,7 +27,7 @@
 # produce output for N = 10-40 and SD = 0-2. To reproduce all data from the
 # article, change the parameters nmax and smax to 100 and 3 respectively.
 # 
-# Jacob Anhøj & Tore Wentzel-Larsen May 2019
+# Jacob Anhøj & Tore Wentzel-Larsen January 2020
 ################################################################################
 
 # Load libraries ----
@@ -191,7 +191,6 @@ bounds <- function(crs, target = 0.925, target_shift = 0.8) {
   two      <- mpfr(2, prec.use)
   mone     <- mpfr(-1, prec.use)
   pt0      <- crs$pt_0.0
-  # pts      <- crs$pt_0.8
   pts      <- crs[[paste0('pt_', format(target_shift, nsmall = 1))]]
   
   # Begin bounds table
