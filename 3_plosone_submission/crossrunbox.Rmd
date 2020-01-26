@@ -37,10 +37,10 @@ The run chart is one form of statistical process control chart that is particula
 Based on the `crossrun` R package we calculated exact values for the joint distribution of C and L for N = 10-100. Furthermore, we developed two functions, `bestbox()` and `cutbox()` that automatically seek to adjust the critical values for C and L to balance between sensitivity and specificity requirements.
 
 **Results**
-We present exact values for the joint distribution of C and L for N = 10-100 together with measures of the diagnostic value of the Anhøj rules. The best box and cut box procedures improved the diagnostic value of the Anhøj rules by keeping the specificity and sensitivity close to pre-specified target values.
+Based on exact values for the joint distribution of C and L for N = 10-100 we present measures of the diagnostic value of the Anhøj rules. The best box and cut box procedures improved the diagnostic value of the Anhøj rules by keeping the specificity and sensitivity close to pre-specified target values.
 
 **Conclusions**
-This study provides exact values for the joint distribution of longest run and number of crossings in random data series and demonstrates that it is possible to obtain better diagnostic properties of run charts by making minor adjustment to the critical values for C and L.
+Based on exact values for the joint distribution of longest run and number of crossings in random data series this study demonstrates that it is possible to obtain better diagnostic properties of run charts by making minor adjustment to the critical values for C and L.
 
 # Keywords
 
@@ -60,7 +60,7 @@ Several tests (or rules) based on the principles of runs analysis for detection 
 
 * Crossings test: the curve crosses the centre line unusually few times.
 
-Collectively, we refer to these tests as the Anhøj rules, which are the default rules used for run and control chart analysis with the `qicharts2` package for R [@qicharts2]. For a thorough discussion of the practical use of run and control charts for quality improvement we refer to the qicharts2 package vignette.
+Collectively, we refer to these tests as the Anhøj rules, which are the default rules used for run and control chart analysis with the `qicharts2` package for R [@qicharts2]. For a thorough discussion of the practical use of run and control charts for quality improvement we refer to the `qicharts2` package vignette.
 
 Critical values for run length and number of crossings depend on the total number of data points in the chart, excluding data points that fall directly on the centre line. The number of crossings follows a binomial distribution, b(N -- 1, 0.5), where N is the number of data points and 0.5 the success probability. Thus, the lower prediction limit for number of crossings may, for example, be set to the lower 5th percentile of the corresponding cumulative binomial distribution [@chen2010]. However, no closed form expression exists for the distribution of longest runs. Consequently, the upper prediction limit for longest runs has traditionally been either a fixed value (usually 7 or 8) [@carey2002a] or an approximate value depending on N as with the Anhøj rules: log~2~(N) + 3 rounded to the nearest integer [@schilling2012]. Figure 1 has 20 data points, the curve crosses the centre line 9 times, and the longest run (points 3-6) contains 4 data points. In a random process with 20 data points, we should expect at least 6 crossings and the longest run should include no more than 7 data points. Thus, according to the Anhøj rules, Figure 1 shows random variation.
 
@@ -130,13 +130,13 @@ Figures 6 and 7 compare the positive and negative likelihood ratios of the Anhø
 
 # Discussion and conclusion
 
-This study provides exact values for the diagnostic properties of the Anhøj rules for run charts with 10-100 data points including shifts up to 3 standard deviation units.
+Based on procedures suggested in our previous paper [@twl2019],this study provides exact values for the diagnostic properties of the Anhøj rules for run charts with 10-100 data points including shifts up to 3 standard deviation units.
 
-To our knowledge, and with the exception of the `crossrun` package [@twl2018] and our previous article [@twl2019], the properties of the joint distribution of number of crossings and longest runs in random data series have not been studied before.
+To our knowledge, and with the exception of our previous work, the properties of the joint distribution of number of crossings and longest runs in random data series have not been studied before.
 
 Furthermore, the study demonstrates that it is feasible to reduce the variability in run chart specificity with varying number of data points by using the best box and cut box adjustments of the Anhøj rules.
 
-Most importantly, figures 6 and 7 confirm our experience from years of practical use of runs analysis, that the Anhøj rules constitute a useful and robust method for detection of persistent shifts only slightly larger than 1 standard deviation units and with as little as 10-12 data points. This can be seen by the fact that LR+ > 10 for SD > 1 and N &ge; 10. Although, the best box and cut box procedures will not change this, the box adjustments may potentially improve the practical value of runs analysis by reducing sudden shifts in sensitivity and specificity when the number of available data points changes. Whether this holds true in practice remains to be confirmed.
+Most importantly, figures 6 and 7 confirm our experience from years of practical use of runs analysis, that the Anhøj rules constitute a useful and robust method for detection of persistent shifts only slightly larger than 1 standard deviation units and with as little as 10-12 data points. This can be seen by the fact that LR+ > 10 for SD > 1 and N &ge; 10. Although, the best box and cut box procedures will not change this, the box adjustments may improve the practical value of runs analysis by reducing sudden shifts in sensitivity and specificity when the number of available data points changes. Whether this holds true in practice remains to be confirmed.
 
 The study has two important limitations. First, the calculations of box probabilities require that the process centre is fixed and known in advance, for example, the median from historical data. In practice the centre line is often determined from the actual data in the run chart, in which case the calculations of box probabilities do not apply. Preliminary studies suggest that this is mostly relevant for short data series. We plan to include a function in a future update of `crossrun` to calculate the box probabilities with empirical centre lines.
 
@@ -150,7 +150,7 @@ In conclusion, this study provides exact values for the diagnostic properties of
 
 # Results table
 
-Table 1: Signal limits, specificity (no shift), and sensitivity (shift = 0.8 SD) for the Anhøj and best box rules and borders for the cut box rules. N = number of data points in chart. C = lower limit for number of crossings, L = upper limit for longest run,  for declaring random variation by the Anhøj and best box rules. Cbord and Lbord = Additional information for the cut box rules. When specified, parts of the border of the best box to retain to declare random variation. When not specified, cut box is identical to best box.
+Table 1: Signal limits and diagnostic values of the Anhøj, best box, and cut box rules.
 
 ```{r, echo=FALSE}
 library(flextable)
@@ -200,6 +200,8 @@ tbl <- merge_h(tbl, part = 'header')
 tbl <- align(tbl, align = 'center', part = 'header')
 autofit(tbl, add_w = 0)
 ```
+
+N = number of data points in chart. C = lower limit for number of crossings, L = upper limit for longest run,  for declaring random variation by the Anhøj and best box rules. Cbord and Lbord = Additional information for the cut box rules. When specified, parts of the border of the best box to retain to declare random variation. When not specified, cut box is identical to best box (see text for details). Specificity = true negative proportion (no shift). Sensitivity = true positive proportion (shift = 0.8 SD).
 
 # Acknowledgments
 

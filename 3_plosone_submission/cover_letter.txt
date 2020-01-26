@@ -1,0 +1,14 @@
+2020-01-26
+
+Dear Editor,
+
+Please consider this manuscript, "Smooth operator: Modifying the Anhøj rules to improve runs analysis in statistical process control", for publication in PlosONE.
+
+The article is a follow up to our previous study published in PlosONE (Wentzel-Larsen 2019:  https://doi.org/10.1371/journal.pone.0223233). Using the methods proposed in the previous article, this study presents new knowledge on the diagnostic properties of runs analysis used with statistical process control. In addition, the article suggests procedures for improving the diagnostic value of runs analysis.
+
+We believe this study makes a significant contribution to the practical use of run and control charts in quality improvement and control.
+
+We suggest Ferdinando Chiacchio, University of Catania, ITALY who edited our previous article as editor.
+
+Kind regards
+Jacob Anhøj & Tore Wentzel-Larsen
