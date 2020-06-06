@@ -27,14 +27,13 @@
 # produce output for N = 10-40 and SD = 0-2. To reproduce all data from the
 # article, change the parameters nmax and smax to 100 and 3 respectively.
 # 
-# Jacob Anhøj & Tore Wentzel-Larsen May 2020
+# Jacob Anhøj & Tore Wentzel-Larsen January 2020
 ################################################################################
 
 # Load libraries ----
-library(Rmpfr)     # v. 0.8.1
-library(crossrun)  # v. 0.1.0
-library(tidyverse) # v. 1.3.0
-library(qicharts2) # v. 0.6.1
+library(Rmpfr)
+library(crossrun)
+library(tidyverse)
 
 # Set parameters ----
 nmax         <- 40      # Max N to include in computations.
@@ -438,27 +437,10 @@ cr_bounds_tall <- cr_bounds %>%
   spread(test, val)
 
 # Figures ----
-## Figure 1: Run chart
-set.seed(4)
-qic(rnorm(20, 3),
-    title = 'Run chart',
-    ylab = 'Indicator value',
-    xlab = 'Time/order')
+## Plot joint distribution matrix
+crplot(cr_bounds, map(cr_dists$pt_0.0, asNumeric), 11, labels = T)
 
-## Figure 2: Specificity
-ggplot(filter(cr_bounds_tall, shift == 0), aes(n, p, colour = rule)) +
-  geom_line(size = 1) +
-  scale_x_continuous(breaks = seq(20, 100, by = 20)) +
-  theme_minimal() +
-  labs(title = 'Specificity',
-       y = 'Probability of true negative',
-       x = 'N')
-
-## Figure 3: Joint distribution matrix
-crplot(cr_bounds, map(cr_dists$pt_0.0, asNumeric), 11, labels = T) +
-  labs(title = 'Joint distribution of longest run and number of crossing fro N = 11')
-
-## Figure 4: Power function
+## Plot power function
 ggplot(cr_bounds_tall, aes(n, 1 - p, colour = rule)) +
   geom_line(size = 1) +
   facet_wrap(~ shift, ncol = 4) +
@@ -468,7 +450,16 @@ ggplot(cr_bounds_tall, aes(n, 1 - p, colour = rule)) +
        y = 'Probability of signal',
        x = 'N')
 
-## Figure 5: Sensitivity for shift = 0.8 SD
+## Plot specificity
+ggplot(filter(cr_bounds_tall, shift == 0), aes(n, p, colour = rule)) +
+  geom_line(size = 1) +
+  scale_x_continuous(breaks = seq(20, 100, by = 20)) +
+  theme_minimal() +
+  labs(title = 'Specificity',
+       y = 'Probability of true negative',
+       x = 'N')
+
+## Plot sensitivity for shift = 0.8 SD
 ggplot(filter(cr_bounds_tall, shift == 0.8), aes(n, 1 - p, colour = rule)) +
   geom_line(size = 1) +
   scale_x_continuous(breaks = seq(20, 100, by = 20)) +
@@ -477,7 +468,7 @@ ggplot(filter(cr_bounds_tall, shift == 0.8), aes(n, 1 - p, colour = rule)) +
        y = 'Probability of true positive',
        x = 'N')
 
-## Figure 6: LR+
+## Plot LR+
 ggplot(filter(cr_bounds_tall, !is.na(loglrpos)), 
        aes(n, exp(loglrpos), colour = rule)) +
   geom_line(size = 0.75) +
@@ -490,7 +481,7 @@ ggplot(filter(cr_bounds_tall, !is.na(loglrpos)),
        y = 'LR+',
        x = 'N')
 
-## Figure 7: LR-
+## Plot LR-
 ggplot(filter(cr_bounds_tall, !is.na(loglrpos)),
        aes(n, exp(loglrneg), colour = rule)) +
   geom_line(size = 0.75) +
@@ -503,9 +494,3 @@ ggplot(filter(cr_bounds_tall, !is.na(loglrpos)),
        y = 'LR-',
        x = 'N')
 
-# Table 1 ----
-data.frame(
-  cr_bounds[c('n', 'ca', 'la', 'cb', 'lb', 'cbord', 'lbord')],
-  round(cr_bounds[c('pa_0.0', 'pb_0.0', 'pc_0.0')], 4),
-  round(1 - cr_bounds[c('pa_0.8', 'pb_0.8', 'pc_0.8')], 4)
-)
